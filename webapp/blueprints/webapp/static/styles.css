@@ -1,15 +1,15 @@
 /* blueprints/webapp/static/styles.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 #base-container {
     min-height: 100vh;
     min-width: 100vw;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 body {
     background-color: #121212;
@@ -55,6 +55,95 @@ body {
     padding: 3px 0 3px 0;
 }
 
+.btn {
+    margin: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #5a2a2a;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #8d4d4d;
+}
+
+.text-input {
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    margin: 5px 0;
+}
+
+.combo-box {
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    margin: 5px 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23e0e0e0" d="M2 0L0 2h4zM2 5L0 3h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+}
+
+.combo-box option {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+}
+
+.combo-box:focus {
+    border-color: #8d4d4d;
+    outline: none;
+}
+
+.combo-box:hover {
+    border-color: #8d4d4d;
+}
+
+.file-input-list {
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+}
+
+.file-input-list:not(:empty) {
+    border: 1px solid #333;
+}
+
+.file-input-list div {
+    margin: 5px 10px 5px 10px;
+    padding: 5px;
+}
+
+.file-input-list:not(:last-child) div {
+    border-bottom: 1px solid #333;
+}
+
+.file-input-list div:hover {
+    background-color: #333;
+    cursor: pointer;
+}
+
+.file {
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    margin: 5px 0;
+}
+
+
 .fill-width {
     width: 100%;
 }
@@ -83,6 +172,10 @@ body {
     list-style: none;
 }
 
+.hidden {
+    display: none;
+}
+
 .bold {
     font-weight: bold;
 }
@@ -93,4 +186,16 @@ body {
 
 .bg-gray {
     background-color: gray;
+}
+
+.bg-error {
+    background-color: #8d4d4d;
+}
+
+.bg-success {
+    background-color: #4d8d4d;
+}
+
+.pad-16 {
+    padding: 16px;
 }

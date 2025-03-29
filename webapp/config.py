@@ -50,7 +50,8 @@ class Config:
             os.makedirs("instance")
 
         if not os.path.exists("instance/db_instance.db"):
-            print("Database doesn't instance doesn't exist - Creating new one")
+            print("Database instance doesn't exist - Creating new one")
             with app.app_context():
                 db.create_all()
-                print("Database successfully created")
+                print(db.metadata.tables.keys())
+            print("Database successfully created")

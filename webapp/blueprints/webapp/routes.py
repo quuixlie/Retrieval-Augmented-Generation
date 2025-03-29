@@ -1,32 +1,32 @@
 from flask import Blueprint, redirect, url_for, render_template, request
 
-webapp = Blueprint('webapp', __name__, template_folder="templates", static_url_path="/webapp", static_folder="static")
+from flask import Blueprint
+
+from .documents import documents_bp
+from .sessions import sessions_bp
+
+webapp_bp = Blueprint('webapp', __name__, template_folder="templates", static_url_path="/webapp",
+                      static_folder="static")
+webapp_bp.register_blueprint(sessions_bp, url_prefix="/sessions")
+webapp_bp.register_blueprint(documents_bp, url_prefix="/documents")
 
 
-@webapp.route('/')
+@webapp_bp.route('/')
 def index():
     return redirect(url_for('webapp.settings'))
 
 
-@webapp.route('/settings', methods=["GET", "POST"])
+@webapp_bp.route('/settings', methods=["GET", "POST"])
 def settings():
+    # User saves settings
     if request.method == "POST":
         print(request.form)
 
+    # page
     elif request.method == "GET":
         return render_template('settings.html')
 
 
-@webapp.route('/sessions', methods=["GET"])
-def sessions():
-    return render_template('sessions.html')
-
-
-@webapp.route('/documents', methods=["GET"])
-def documents():
-    return render_template('documents.html')
-
-
-@webapp.route('/chat', methods=["GET"])
+@webapp_bp.route('/chat', methods=["GET"])
 def chat():
     return render_template('chat.html')

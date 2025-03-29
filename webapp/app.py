@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask import session
+
+import session_data
+from session_data import SessionData
 
 db = SQLAlchemy()
 
@@ -21,15 +25,17 @@ def create_app() -> Flask:
 
     # Loading flask submodules
     db.init_app(app)
-    Config.create_db(app, db)
     migrate = Migrate(app, db)
 
     # Registering blueprints and routes
-    from blueprints import webapp
-    from blueprints import api
+    from blueprints import webapp_bp
+    from blueprints import api_bp
 
-    app.register_blueprint(webapp, url_prefix="/")
-    app.register_blueprint(api, url_prefix="/api")
+    app.register_blueprint(webapp_bp, url_prefix="/")
+    app.register_blueprint(api_bp, url_prefix="/api")
+
+    # Ensuring the database exists
+    Config.create_db(app, db)
 
     # Registering callbacks
     @app.errorhandler(404)
@@ -39,6 +45,12 @@ def create_app() -> Flask:
     @app.errorhandler(500)
     def internal_error(error):
         return error.get_response(), 500
+
+    @app.before_request
+    def before_request():
+        if len(session.keys()) == 0:
+            for k, v in session_data.default_session_data().items():
+                session.setdefault(k, v)
 
     return app
 

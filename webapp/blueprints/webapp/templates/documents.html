@@ -1,5 +1,71 @@
 {% extends "base.html" %}
 {% block title %}Documents{% endblock %}
+{% block scripts %}
+    <script defer>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('fileInput');
+            const fileNames = document.getElementById('fileNames');
+
+            fileInput.addEventListener('change', () => {
+                fileNames.innerHTML = '';
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    const file = fileInput.files[i];
+                    const listItem = document.createElement('div');
+                    listItem.textContent = file.name;
+                    fileNames.appendChild(listItem);
+                }
+            });
+
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                const listItem = document.createElement('div');
+                listItem.textContent = file.name;
+                fileNames.appendChild(listItem);
+            }
+        });
+    </script>
+{% endblock %}
 {% block content %}
-    Documents
+
+    {% if active_session is defined and active_session is not none %}
+        Active session: {{ active_session }}
+        {% if action_success is not none %}
+            <div class="pad-16 rounded-corners {{ "bg-success" if action_success else "bg-error" }}">
+                msg: {{ action_msg }}
+            </div>
+        {% endif %}
+        {#  Input file form #}
+        <form method="post" enctype="multipart/form-data">
+            <label for="fileInput" class="btn" style="display:inline-block">
+                Choose documents
+            </label>
+            <input type="file" name="files" class="hidden" id="fileInput" accept="application/pdf" multiple
+                   required>
+            <div class="file-input-list" id="fileNames"></div>
+            <div class="flex-row">
+                <input type="submit" formaction="{{ url_for("webapp.documents.add") }}" value="Add documents"
+                       class="btn">
+                <input type="submit" formaction="{{ url_for("webapp.documents.delete") }}" value="Delete All documents"
+                       class="btn">
+            </div>
+        </form>
+        {# Displaying already loaded documents #}
+        {% if documents is defined and documents|length > 0 %}
+            <ul>
+                {% for document in documents %}
+                    <li class="">
+                        {{ document }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div>
+                No documents available. Please add some.
+            </div>
+        {% endif %}
+    {% else %}
+        <div>
+            No active session. Please select one.
+        </div>
+    {% endif %}
 {% endblock %}

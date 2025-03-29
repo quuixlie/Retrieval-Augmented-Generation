@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href= {{ url_for('webapp.static',filename='styles.css') }}/>
     <title>{% block title %}TITLE NOT SET{% endblock %}</title>
-
     {% block scripts %}
     {% endblock %}
 </head>
 <body>
-
 <div id="base-container" class="flex-row fill-width fill-height">
     {% include "side_navigation.html" %}
 
@@ -18,7 +16,5 @@
         {% endblock %}
     </main>
 </div>
-
-
 </body>
 </html>
