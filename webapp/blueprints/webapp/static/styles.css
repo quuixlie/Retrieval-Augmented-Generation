@@ -1,0 +1,96 @@
+/* blueprints/webapp/static/styles.css */
+
+#base-container {
+    min-height: 100vh;
+    min-width: 100vw;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+}
+
+.nav-container {
+    background-color: #1f1f1f;
+    padding: 10px;
+    border-right: 1px solid #333;
+    width: 200px;
+}
+
+.nav-item {
+    margin: 5px 0;
+    transition: background-color 0.3s, color 0.3s;
+    list-style: none;
+    border-radius: 10px;
+}
+
+.nav-item:hover {
+    background-color: #333;
+}
+
+.nav-item.active {
+    background-color: #8d4d4d;
+    color: white;
+}
+
+.nav-item.active a {
+    color: white;
+}
+
+.nav-item a {
+    color: #e0e0e0;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+}
+
+.nav-item a div {
+    padding: 3px 0 3px 0;
+}
+
+.fill-width {
+    width: 100%;
+}
+
+.fill-height {
+    height: 100%;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-content-center {
+    justify-content: center;
+    align-items: center;
+}
+
+.no-decor {
+    text-decoration: none;
+    list-style: none;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.rounded-corners {
+    border-radius: 10px;
+}
+
+.bg-gray {
+    background-color: gray;
+}
