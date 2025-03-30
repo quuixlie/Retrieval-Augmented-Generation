@@ -1,5 +1,105 @@
 {% extends "base.html" %}
 {% block title %}Chat{% endblock %}
 {% block content %}
-    Chat
+    {% if active_session is defined and active_session is not none %}
+        <div>
+            Active session: {{ active_session }}
+        </div>
+        <div style="width:80%;max-width:800px;padding:16px;">
+            <div class="chat-container">
+                {% for message in messages %}
+
+                    <div class="rounded-corners pad-16 right bg-gray">
+                        {{ message.message }}
+                    </div>
+                    {% if message.response is not none %}
+                        <div class="rounded-corners pad-16 left bg-gray">
+                            {{ message.response }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="pad-16"></div>
+            <form id="messageInput" class="chat-input-area fill-width flex-content-center rounded-corners">
+                <textarea class="text-input flex-grow" type="text" placeholder="Type your message here" required></textarea>
+                <button type="submit" class="btn">Send</button>
+            </form>
+        </div>
+
+        <script defer>
+            let messageInput = document.getElementById('messageInput');
+
+            function createMessage(message, isResponse) {
+                let messageDiv = document.createElement('div');
+                let alignment = isResponse ? 'left' : 'right';
+
+                messageDiv.classList.add('rounded-corners', 'pad-16', 'bg-gray', alignment);
+                messageDiv.textContent = message;
+                return messageDiv;
+            }
+
+            function scrollToBottom() {
+                const chatContainer = document.querySelector('.chat-container');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            messageInput.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const inputElement = messageInput.querySelector('textarea');
+                let input = inputElement.value;
+
+                inputElement.value = '';
+
+                if (input.length <= 0)
+                    return;
+
+                // Creating the message
+                const userMessage = createMessage(input, false);
+                document.querySelector('.chat-container').appendChild(userMessage);
+                scrollToBottom()
+
+                const loadingSpinner = document.createElement('div');
+                loadingSpinner.classList.add('loader', 'flex-self-center');
+
+                // Loading spinner
+                document.querySelector('.chat-container').appendChild(loadingSpinner);
+
+                const formData = new FormData();
+                formData.append("message", input);
+
+                fetch("{{ url_for('webapp.chat.send') }}", {
+                    method: "POST",
+                    body: formData
+                }).then(async (response) => {
+                    return response.json()
+                }).then((data) => {
+
+                    if (data["rag_response"]) {
+                        // Creating the response
+                        const ragMessage = createMessage(data["rag_response"], true);
+                        document.querySelector('.chat-container').appendChild(ragMessage);
+
+                    } else if (data["error"]) {
+                        const errorMessage = document.createElement('div');
+                        errorMessage.textContent = data["error"];
+                        errorMessage.classList.add('rounded-corners', 'pad-16', 'bg-error', 'flex-self-center');
+                        document.querySelector('.chat-container').appendChild(errorMessage);
+                    }
+                    scrollToBottom()
+
+
+                }).catch((error) => {
+                    userMessage.remove()
+                }).finally(() => {
+                    // Removing the loading spinner
+                    loadingSpinner.remove();
+                });
+            })
+        </script>
+    {% else %}
+        <div>
+            No active session. Please select or create one.
+        </div>
+    {% endif %}
+
 {% endblock %}

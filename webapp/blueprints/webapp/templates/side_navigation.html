@@ -2,9 +2,9 @@
 Map of navigation items -> its "route" within webapp blueprint
 Requires the styles.css file
 #}
-{% set navTabs = [{"name":"Settings","route":"settings"},{"name":"Sessions","route":"sessions.index"},{"name":"Documents","route":"documents.index"},{"name":"Chat","route":"chat"}] %}
+{% set navTabs = [{"name":"Settings","route":"settings"},{"name":"Sessions","route":"sessions.index"},{"name":"Documents","route":"documents.index"},{"name":"Chat","route":"chat.index"}] %}
 
-<nav class="fill-height nav-container">
+<nav class="nav-container">
     <ul>
         {% for tab in navTabs %}
             <li class="nav-item rounded-corners {{ "active" if request.endpoint == ('webapp.' + tab['route']) else "" }}">

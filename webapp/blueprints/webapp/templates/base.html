@@ -8,10 +8,10 @@
     {% endblock %}
 </head>
 <body>
-<div id="base-container" class="flex-row fill-width fill-height">
+<div id="base-container">
     {% include "side_navigation.html" %}
 
-    <main class="flex-col fill-width fill-height flex-content-center">
+    <main class="flex-col fill-width flex-content-center">
         {% block content %}
         {% endblock %}
     </main>
