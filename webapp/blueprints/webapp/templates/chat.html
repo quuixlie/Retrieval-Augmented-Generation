@@ -40,8 +40,7 @@
     function createMessage(message, isResponse) {
         let messageDiv = document.createElement('div');
         let alignment = isResponse ? 'left' : 'right';
-
-        messageDiv.classList.add('rounded-corners', 'pad-16', 'bg-gray', alignment);
+        messageDiv.classList.add('message', alignment);
         messageDiv.textContent = message;
         return messageDiv;
     }
@@ -50,6 +49,24 @@
         const chatContainer = document.querySelector('.chat-container');
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
+
+    let textarea = messageInput.querySelector('textarea');
+    textarea.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            if (event.shiftKey) {
+                // Allow new line
+                event.preventDefault();
+                let cursorPos = textarea.selectionStart;
+                let text = textarea.value;
+                textarea.value = text.substring(0, cursorPos) + "\n" + text.substring(cursorPos);
+                textarea.selectionStart = textarea.selectionEnd = cursorPos + 1;
+            } else {
+                // Submit the form
+                event.preventDefault();
+                messageInput.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }
+        }
+    });
 
     messageInput.addEventListener('submit', (event) => {
         event.preventDefault();
