@@ -17,43 +17,6 @@ body {
     min-height: 100vh;
 }
 
-.nav-container {
-    background-color: #1f1f1f;
-    padding: 10px;
-    border-right: 1px solid #333;
-    width: 200px;
-}
-
-.nav-item {
-    margin: 5px 0;
-    transition: background-color 0.3s, color 0.3s;
-    list-style: none;
-    border-radius: 10px;
-}
-
-.nav-item:hover {
-    background-color: #333;
-}
-
-.nav-item.active {
-    background-color: #8d4d4d;
-    color: white;
-}
-
-.nav-item.active a {
-    color: white;
-}
-
-.nav-item a {
-    color: #e0e0e0;
-    text-decoration: none;
-    display: block;
-    padding: 10px;
-}
-
-.nav-item a div {
-    padding: 3px 0 3px 0;
-}
 
 .btn {
     margin: 10px;
@@ -265,6 +228,8 @@ body {
     height: 25px;
     animation: spin 2s linear infinite;
 }
+
+
 
 @keyframes spin {
     0% {
