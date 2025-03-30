@@ -6,24 +6,6 @@ Requires the styles.css file
 {% block scripts %} <script src="{{ url_for('webapp.static', filename='toggleSidebar.js') }}"></script>{% endblock %}
 {% set navTabs = [{"name":"Settings","route":"settings"},{"name":"Sessions","route":"sessions.index"},{"name":"Documents","route":"documents.index"},{"name":"Chat","route":"chat.index"}] %}
 
-<!--<div class="sidebar-wrapper">-->
-<!--    <button id="toggleNav" class="toggle-btn">☰</button>-->
-<!--&lt;!&ndash;    <div class="sidebar-overlay" id="sidebarOverlay"></div>&ndash;&gt;-->
-<!--    <nav id="navBar" class="nav-container">-->
-<!--        <ul>-->
-<!--            {% for tab in navTabs %}-->
-<!--                <li class="nav-item rounded-corners {{ "active" if request.endpoint == ('webapp.' + tab['route']) else "" }}">-->
-<!--                    <a href="{{ url_for("webapp." + tab['route']) }}">-->
-<!--                        <div>-->
-<!--                            {{ tab["name"] }}-->
-<!--                        </div>-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--            {% endfor %}-->
-<!--        </ul>-->
-<!--    </nav>-->
-<!--</div>-->
-
 <button id="toggleNav" class="toggle-btn">‹</button>
 <nav id="navBar" class="nav-container">
     <ul>
