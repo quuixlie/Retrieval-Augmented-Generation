@@ -36,9 +36,8 @@ def new():
 
 @chat_bp.route('/send/<int:conversation_id>', methods=["POST"])
 def send(conversation_id: int):
-    conversation_exists = ConversationModel.query.filter(ConversationModel.id == conversation_id).first()
 
-    if not conversation_exists:
+    if not ConversationModel.exists(conversation_id):
         return jsonify({"error": "Invalid conversation"}), 400
 
     message = request.form.get("message", None)

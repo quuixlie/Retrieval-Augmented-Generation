@@ -20,9 +20,15 @@
         </div>
     </div>
 
-    {#  <!-- Fixed input at bottom (no gap) --> #}
+    {% set conversation_id = request.path.split("/")[-1] %}
     <div class="chat-input-container">
-        <form action="{{ url_for('webapp.chat.send',conversation_id=request.path.split("/")[-1]) }}" id="messageInput"
+        <form enctype="multipart/form-data">
+            <label for="documentInput">Input Documents</label>
+            <input class="hidden" id="documentInput" type="file" name="files" accept="application/pdf"
+                   data-url="{{ url_for("webapp.documents.upload",conversation_id=conversation_id) }}" multiple
+                   required>
+        </form>
+        <form action="{{ url_for('webapp.chat.send',conversation_id=conversation_id[-1]) }}" id="messageInput"
               class="chat-input-area">
             <textarea class="text-input" placeholder="Type your message here" required></textarea>
             <button type="submit">Send</button>

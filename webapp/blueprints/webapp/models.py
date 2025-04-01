@@ -12,6 +12,22 @@ class ConversationModel(db.Model):
     def __repr__(self):
         return f"Conversation(name={self.name})"
 
+    @staticmethod
+    def exists(id: int) -> bool:
+        return ConversationModel.query.filter_by(id=id).first() is not None
+
+
+class DocumentModel(db.Model):
+    __tablename__ = "documents"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id, ondelete="CASCADE", onupdate="CASCADE"))
+    name = db.Column(db.String(64))
+
+    @staticmethod
+    def exists_with_name(name: str) -> bool:
+        return DocumentModel.query.filter_by(name=name).first() is not None
+
 
 class ChatMessageModel(db.Model):
     __tablename__ = "chat_messages"

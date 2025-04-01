@@ -85,3 +85,55 @@ messageInput.addEventListener('submit', (event) => {
         loadingSpinner.remove();
     });
 })
+
+
+// Uploading files
+
+document.addEventListener('DOMContentLoaded', () => {
+    const documentInput = document.getElementById("documentInput")
+
+    documentInput.addEventListener("change", () => {
+        const files = documentInput.files
+        const url = documentInput.getAttribute('data-url')
+        console.log(`URL : ${url}`)
+
+        if (!files || files.length <= 0) {
+            console.log("no files provided")
+            return;
+        }
+
+        if (!url) {
+            console.log("no url provided")
+            return;
+        }
+
+
+        console.log(`files : ${files}`)
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append("files", files[i])
+        }
+
+        console.log([...formData])
+
+        fetch(url, {
+            method: "POST",
+            body: formData
+        }).then(async (response) => {
+            if (!response.ok) {
+                const json = await response.json()
+
+                if (json["error"]) {
+                    console.log(`Server error: ${json["error"]}`)
+                } else {
+                    console.log("unkonwn reror")
+                }
+            }
+            console.log("Success")
+        }).catch((error) => {
+            console.log("Coulnd't upload files")
+
+        });
+
+    })
+})

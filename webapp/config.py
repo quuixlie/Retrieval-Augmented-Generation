@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -12,6 +12,8 @@ class Config:
     """
     SECRET_KEY = None
     SQLALCHEMY_DATABASE_URI = "sqlite:///db_instance.db"
+    UPLOAD_DIRECTORY = os.path.join("instance", "uploads")
+    API_BASE_URL = "http://localhost:5000"
 
     @staticmethod
     def initialize() -> None:
@@ -20,6 +22,15 @@ class Config:
         """
 
         Config.SECRET_KEY = Config.__read_secret_key()
+        Config.__create_upload_directory()
+
+    @staticmethod
+    def __create_upload_directory():
+        """
+        Creates the upload directory if it doesn't exist
+        """
+        if not os.path.exists(Config.UPLOAD_DIRECTORY):
+            os.makedirs(Config.UPLOAD_DIRECTORY)
 
     @staticmethod
     def __read_secret_key() -> str:

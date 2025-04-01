@@ -61,6 +61,8 @@
 
 /* Chat input container */
 .chat-input-container {
+    display:flex;
+    flex-direction: row;
     background-color: #1f1f1f;
     z-index: 100;
     box-shadow: 0 -0.2vh 1vw rgba(0, 0, 0, 0.3);
