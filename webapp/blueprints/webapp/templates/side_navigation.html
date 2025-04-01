@@ -4,10 +4,13 @@ Requires the styles.css file
 #}
 {% block stylesheets %} <link rel="stylesheet" href= "{{ url_for('webapp.static',filename='navBar.css') }}"/> {% endblock %}
 {% block scripts %} <script src="{{ url_for('webapp.static', filename='toggleSidebar.js') }}"></script>{% endblock %}
-{% set navTabs = [{"name":"Settings","route":"settings"},{"name":"Sessions","route":"sessions.index"},{"name":"Documents","route":"documents.index"},{"name":"Chat","route":"chat.index"}] %}
+{% set navTabs = [{"name":"Settings","route":"settings"}] %}
 
-<button id="toggleNav" class="toggle-btn">‹</button>
+<button id="toggleNav" class="toggle-btn">‹</button> {# Keep toggle outside #}
+
 <nav id="navBar" class="nav-container">
+<!--    <button id="newChatButton" class="new-chat-btn">+</button>-->
+    <div id="newChatButtonPlaceholder"></div>
     <ul>
         {% for tab in navTabs %}
             <li class="nav-item {{ "active" if request.endpoint == ('webapp.' + tab['route']) else "" }}">
@@ -17,4 +20,17 @@ Requires the styles.css file
             </li>
         {% endfor %}
     </ul>
+
+    {# --- Existing Chat History --- #}
+    <div class="chat-history">
+        <ul id="chatList">
+            {% for chat in chat_sessions %}
+                <li class="nav-item">
+                    {# Make sure this link goes somewhere, e.g., /chat/{{ chat.id }} #}
+                    <a href="">{{ chat.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </nav>
+<button id="newChatButton" class="new-chat-btn">+</button>

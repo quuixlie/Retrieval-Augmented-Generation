@@ -11,12 +11,17 @@ chat_bp = Blueprint("chat", __name__)
 def index():
     sess = get_session()['active_session_name'] if get_session()['active_session_name'] else None
 
-    print("session", sess)
+    # print("session", sess)
+    chat_sessions = [
+        {"id": 1, "title": "Dialog 1"},
+        {"id": 2, "title": "Dialog 2"},
+    ]
+
     messages = []
     if sess:
         messages = ChatMessageModel.query.filter(ChatMessageModel.session_name == sess).all()
 
-    return render_template('chat.html', messages=messages, active_session=sess)
+    return render_template('chat.html', messages=messages, active_session=sess,  chat_sessions=chat_sessions)
 
 
 @chat_bp.route('/send', methods=["POST"])

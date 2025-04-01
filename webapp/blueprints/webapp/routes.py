@@ -15,7 +15,7 @@ webapp_bp.register_blueprint(chat_bp, url_prefix="/chat")
 
 @webapp_bp.route('/')
 def index():
-    return redirect(url_for('webapp.settings'))
+    return redirect(url_for('webapp.chat.index'))
 
 
 @webapp_bp.route('/settings', methods=["GET", "POST"])
