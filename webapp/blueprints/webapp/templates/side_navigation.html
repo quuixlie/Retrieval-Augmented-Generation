@@ -6,11 +6,16 @@ Requires the styles.css file
 {% block scripts %} <script src="{{ url_for('webapp.static', filename='toggleSidebar.js') }}"></script>{% endblock %}
 {% set navTabs = [{"name":"Settings","route":"settings"}] %}
 
-<button id="toggleNav" class="toggle-btn">‹</button> {# Keep toggle outside #}
+<button id="toggleNav" class="toggle-btn">‹</button>
 
 <nav id="navBar" class="nav-container">
-<!--    <button id="newChatButton" class="new-chat-btn">+</button>-->
-    <div id="newChatButtonPlaceholder"></div>
+
+    <ul id="topButtonContainer">
+
+        <div id="newChatButtonPlaceholder"></div>
+<!--        <button id="searchButton" class="search-btn">S</button>-->
+    </ul>
+
     <ul>
         {% for tab in navTabs %}
             <li class="nav-item {{ "active" if request.endpoint == ('webapp.' + tab['route']) else "" }}">

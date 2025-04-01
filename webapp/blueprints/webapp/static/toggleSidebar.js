@@ -31,12 +31,11 @@ document.addEventListener('DOMContentLoaded', function() {
         newChatButton.textContent = '+'; // Ensure correct text/icon
     }
 
-    // Function to move button INSIDE nav (into placeholder)
     function moveButtonInside() {
         placeholder.appendChild(newChatButton); // Move button into placeholder
         newChatButton.classList.remove('state-closed');
         newChatButton.classList.add('state-open');
-        newChatButton.textContent = 'New Chat'; // Change text when inside (optional)
+        // newChatButton.textContent = 'New Chat'; // Change text when inside (optional)
     }
 
     // Main function to control sidebar state
@@ -60,17 +59,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set initial state on load
     if (savedState === 'open') {
-        // IMPORTANT: Temporarily move button inside BEFORE setting state
-        // to avoid brief visual glitch if it starts outside but should be inside.
         moveButtonInside();
         setSidebarState(true);
     } else {
-        // Ensure button starts outside with correct class if default is closed
-        moveButtonOutside(); // Explicitly place outside on load if state is closed/null
+        moveButtonOutside();
         setSidebarState(false);
     }
 
-    // Toggle on click
     toggleBtn.addEventListener('click', function() {
         const isCurrentlyOpen = navBar.classList.contains('visible');
         setSidebarState(!isCurrentlyOpen); // Toggle the state

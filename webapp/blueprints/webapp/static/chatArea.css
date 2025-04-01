@@ -1,4 +1,4 @@
-/* Floating active session indicator */
+
 .active-session-indicator {
     position: fixed;
     top: 2vh;
@@ -12,14 +12,13 @@
     border: 0.1vw solid #444;
 }
 
-/* Chat container */
 .chat-container-wrapper {
     flex: 1;
     overflow-y: auto;
     width: 60vw;
     max-width: 60vw;
     margin: 0 auto;
-    padding-bottom: 8vh; /* Space for input */
+    padding-bottom: 8vh;
     box-sizing: border-box;
 }
 
@@ -36,7 +35,6 @@
 
 }
 
-/* Message bubbles */
 .chat-container .message {
     max-width: 60%;
     padding: 1.2vh 0.8vw;
@@ -59,12 +57,9 @@
     margin-left: auto;
 }
 
-/* Chat input container */
 .chat-input-container {
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
     background-color: #1f1f1f;
     z-index: 100;
     box-shadow: 0 -0.2vh 1vw rgba(0, 0, 0, 0.3);
