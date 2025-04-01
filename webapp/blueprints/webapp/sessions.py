@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, url_for, redirect, session
 
 from app import db
-from blueprints.webapp.models import SessionModel
+from blueprints.webapp.models import ConversationModel
 from session_data import SessionData, get_session
 
 sessions_bp = Blueprint('sessions', __name__)
@@ -14,7 +14,7 @@ def index():
     action_msg = request.args.get("msg", None)
 
     # Querying the names of the sessions
-    session_names = [name for (name,) in SessionModel.query.with_entities(SessionModel.name).all()]
+    session_names = [name for (name,) in ConversationModel.query.with_entities(ConversationModel.name).all()]
 
     active_session = get_session()['active_session_name'] if get_session()['active_session_name'] else None
 
@@ -33,12 +33,12 @@ def add():
     if not name:
         return redirect(url_for('webapp.sessions.index', success=False, msg="Name not provided"))
 
-    already_exists = SessionModel.query.filter(SessionModel.name == name).first()
+    already_exists = ConversationModel.query.filter(ConversationModel.name == name).first()
 
     if already_exists:
         return redirect(url_for('webapp.sessions.index', success=False, msg="Session already exists"))
 
-    new_session = SessionModel(name=name)
+    new_session = ConversationModel(name=name)
     db.session.add(new_session)
     db.session.commit()
 
@@ -58,7 +58,7 @@ def select():
     if not name:
         return redirect(url_for('webapp.sessions.index', success=False, msg="Name not provided"))
 
-    new_session = SessionModel.query.filter(SessionModel.name == name).first()
+    new_session = ConversationModel.query.filter(ConversationModel.name == name).first()
 
     get_session().active_session_name = new_session.name
 
@@ -76,7 +76,7 @@ def delete():
     if not name:
         return redirect(url_for('webapp.sessions.index', success=False, msg="Name not provided"))
 
-    new_session = SessionModel.query.filter(SessionModel.name == name).first()
+    new_session = ConversationModel.query.filter(ConversationModel.name == name).first()
     db.session.delete(new_session)
     db.session.commit()
 

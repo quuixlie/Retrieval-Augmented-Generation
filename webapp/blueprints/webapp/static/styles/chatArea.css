@@ -61,10 +61,6 @@
 
 /* Chat input container */
 .chat-input-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
     background-color: #1f1f1f;
     z-index: 100;
     box-shadow: 0 -0.2vh 1vw rgba(0, 0, 0, 0.3);

@@ -10,16 +10,12 @@ class SessionData(TypedDict, total=False):
 
     Used to represent all the data stored in the session
     Should be accessed by session_data.get_session():
-    !!! Not to be confused with the applications active session and SessionModel !!!
 
     ----------
     Attributes
     ----------
-    active_session_name : str
-        The name of the active (SessionModel) session
     """
 
-    active_session_name: str | None
 
 
 def default_session_data() -> SessionData:
@@ -27,7 +23,7 @@ def default_session_data() -> SessionData:
     Returns the default session data
     :return: Default session data
     """
-    return SessionData(active_session_name=None)
+    return SessionData()
 
 
 def get_session() -> 'SessionData':
