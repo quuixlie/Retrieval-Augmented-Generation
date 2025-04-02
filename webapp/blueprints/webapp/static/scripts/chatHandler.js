@@ -5,7 +5,7 @@ function createMessage(message, isResponse) {
     let messageDiv = document.createElement('div');
     let alignment = isResponse ? 'left' : 'right';
     messageDiv.classList.add('message', alignment);
-    messageDiv.textContent = message;
+    messageDiv.innerText = message;
     return messageDiv;
 }
 

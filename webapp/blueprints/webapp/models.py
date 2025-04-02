@@ -22,11 +22,16 @@ class DocumentModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id, ondelete="CASCADE", onupdate="CASCADE"))
+
+    """Original name of the file"""
     name = db.Column(db.String(64))
 
+    """Name of the file that is stored on the server"""
+    path = db.Column(db.String(256))
+
     @staticmethod
-    def exists_with_name(name: str) -> bool:
-        return DocumentModel.query.filter_by(name=name).first() is not None
+    def exists_with_path(path: str) -> bool:
+        return DocumentModel.query.filter_by(path=path).first() is not None
 
 
 class ChatMessageModel(db.Model):

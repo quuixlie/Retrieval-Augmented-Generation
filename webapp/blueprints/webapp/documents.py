@@ -34,17 +34,15 @@ def upload(conversation_id: int):
         return jsonify({"error": "Conversation does not exist"})
 
     files = request.files.getlist("files")
-    print(request.form.keys())
-    print(files)
 
     for file in files:
-        name = secure_filename(str(UUID(bytes=os.urandom(16))))
-        while DocumentModel.exists_with_name(name):
-            name = secure_filename(str(UUID(bytes=os.urandom(16))))
+        path_name = secure_filename(str(UUID(bytes=os.urandom(16))) + ".pdf")
+        while DocumentModel.exists_with_path(path_name):
+            path_name = secure_filename(str(UUID(bytes=os.urandom(16))) + ".pdf")
 
-        document = DocumentModel(conversation_id=conversation_id, name=name)
+        document = DocumentModel(conversation_id=conversation_id, name=file.filename, path=path_name)
 
-        path = os.path.join(Config.UPLOAD_DIRECTORY, name)
+        path = os.path.join(Config.UPLOAD_DIRECTORY, path_name)
 
         try:
             file.save(path)
@@ -62,7 +60,6 @@ def upload(conversation_id: int):
         json = response.json()
 
         print(json)
-
 
         if json.get("error", None):
             return jsonify({"error": json.get("error")})

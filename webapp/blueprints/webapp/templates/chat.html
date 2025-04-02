@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Chat{% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/chatArea.css') }}"/> {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/chat.css') }}"/> {% endblock %}
 {% block content %}
 
-    {#  Chat container #}
-    <div class="chat-container-wrapper">
+    <div class="chat-wrapper">
         <div class="chat-container">
             {% for message in messages %}
                 <div class="message right">
@@ -18,23 +17,41 @@
                 {% endif %}
             {% endfor %}
         </div>
-    </div>
 
-    {% set conversation_id = request.path.split("/")[-1] %}
-    <div class="chat-input-container">
-        <form enctype="multipart/form-data">
-            <label for="documentInput">Input Documents</label>
-            <input class="hidden" id="documentInput" type="file" name="files" accept="application/pdf"
+        {% set conversation_id = request.path.split("/")[-1] %}
+
+        <div class="chat-input-container">
+            <label class="btn size-min-content" for="documentInput">
+                <img src="{{ url_for("webapp.static",filename="icons/add_file.svg") }}" alt="" width="24"
+                     height="24">
+            </label>
+            <input class=" hidden" id="documentInput" type="file" name="files" accept="application/pdf"
                    data-url="{{ url_for("webapp.documents.upload",conversation_id=conversation_id) }}" multiple
                    required>
-        </form>
-        <form action="{{ url_for('webapp.chat.send',conversation_id=conversation_id[-1]) }}" id="messageInput"
-              class="chat-input-area">
-            <textarea class="text-input" placeholder="Type your message here" required></textarea>
-            <button type="submit">Send</button>
-        </form>
+            <form action="{{ url_for('webapp.chat.send',conversation_id=conversation_id) }}" id="messageInput"
+                  class="chat-input-area">
+                <textarea class="text-input" placeholder="Type your message here" required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
     </div>
 
+    <div class="file-list-container">
+        <button class="file-list-button">Attached documents</button>
+        <div class="file-list">
+            {% if attached_documents | length > 0 %}
+                {% for file in attached_documents %}
+                    <div class="file">
+                        <img src="{{ url_for("webapp.static",filename="icons/file.svg") }}" width="32" height="32"
+                             alt=""/>
+                        <span>{{ file.name }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                No files attached
+            {% endif %}
+        </div>
+    </div>
 
 
     <script src="{{ url_for('webapp.static', filename="scripts/chatHandler.js") }}"></script>

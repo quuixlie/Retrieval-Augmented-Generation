@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
 from app import db
-from .models import ChatMessageModel, ConversationModel
-from session_data import get_session
+from .models import ChatMessageModel, ConversationModel, DocumentModel
 
 chat_bp = Blueprint("chat", __name__)
 
@@ -22,7 +21,9 @@ def chat(conversation_id: int):
 
     messages = ChatMessageModel.query.filter(ChatMessageModel.conversation_id == conversation_id).all()
 
-    return render_template('chat.html', messages=messages)
+    attached_documents = DocumentModel.query.filter(DocumentModel.conversation_id == conversation_id).all()
+
+    return render_template('chat.html', messages=messages, attached_documents=attached_documents)
 
 
 @chat_bp.route('/new', methods=['GET'])
@@ -36,7 +37,6 @@ def new():
 
 @chat_bp.route('/send/<int:conversation_id>', methods=["POST"])
 def send(conversation_id: int):
-
     if not ConversationModel.exists(conversation_id):
         return jsonify({"error": "Invalid conversation"}), 400
 
@@ -48,6 +48,8 @@ def send(conversation_id: int):
     # Todo :: Implement sending requests to RAG api
 
     response = "Some test rag response"
+
+    print("Message: ", message)
 
     try:
         new_message = ChatMessageModel(conversation_id=conversation_id, message=message, response=response)

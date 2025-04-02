@@ -1,35 +1,27 @@
-/* Floating active session indicator */
-.active-session-indicator {
-    position: fixed;
-    top: 2vh;
-    right: 2vw;
-    background-color: #2a2a2a;
-    padding: 0.8vh 1.6vw;
-    border-radius: 2vh;
-    font-size: 0.9em;
-    box-shadow: 0 0.2vh 1vw rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    border: 0.1vw solid #444;
+
+.chat-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    width: 60%;
+    height: 100vh;
+
+    align-self: center;
+
 }
 
-/* Chat container */
-.chat-container-wrapper {
-    flex: 1;
-    overflow-y: auto;
-    width: 60vw;
-    max-width: 60vw;
-    margin: 0 auto;
-    padding-bottom: 8vh; /* Space for input */
-    box-sizing: border-box;
-}
 
 .chat-container {
     display: flex;
     flex-direction: column;
+
+    flex: 1;
     gap: 2vh;
-    padding: 2vh;
-    padding-top: 6vh;
-    max-height: calc(100vh - 15vh);
+
+    width: 100%;
+
+    padding: 12px;
+
     overflow-y: auto;
     scroll-behavior: smooth;
     align-self: center;
@@ -38,50 +30,50 @@
 
 /* Message bubbles */
 .chat-container .message {
-    max-width: 60%;
-    padding: 1.2vh 0.8vw;
-    border-radius: 1.8vh;
-    line-height: 1.4;
-    word-wrap: break-word;
+    max-width: 70%;
+    padding: 12px;
+    border-radius: 8px;
+    text-wrap: wrap;
+    word-wrap: anywhere;
 }
 
 .chat-container .left {
     align-self: flex-start;
     background-color: #2a2a2a;
     border-bottom-left-radius: 0.4vh;
-    margin-right: auto;
 }
 
 .chat-container .right {
     align-self: flex-end;
     background-color: #5a2a2a;
     border-bottom-right-radius: 0.4vh;
-    margin-left: auto;
 }
 
 /* Chat input container */
 .chat-input-container {
-    display:flex;
+    display: flex;
     flex-direction: row;
-    background-color: #1f1f1f;
-    z-index: 100;
+    align-items: center;
+
+    width: 100%;
+
+    border-radius: 8px;
+
     box-shadow: 0 -0.2vh 1vw rgba(0, 0, 0, 0.3);
-    width: 60vw;
-    max-width: 60vw;
-    margin: 1.6vh auto;
-    box-sizing: border-box;
-    border-radius: 1vh;
+    background-color: #1f1f1f;
 }
 
 .chat-input-area {
     display: flex;
+
+    justify-content: center;
+
+    flex: 1;
     gap: 1.2vh;
-    align-items: center;
-    padding: 1.6vh;
 }
 
 .chat-input-area textarea {
-    flex-grow: 1;
+    flex: 1;
     padding: 1.2vh 1.6vw;
     border: 0.1vw solid #333;
     border-radius: 0.8vh;
@@ -130,4 +122,73 @@
 
 ::-webkit-scrollbar-thumb:hover {
     background: #444;
+}
+
+
+.file-list-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    border-radius: 8px;
+    padding: 1vh;
+
+}
+
+
+.file-list-button {
+    border: none;
+    padding: 12px;
+    background: #2a2a2a;
+    color: white;
+
+    width: min-content;
+
+    float: right;
+
+    border-radius: 8px;
+}
+
+.file-list-container:hover .file-list-button {
+    border-radius: 8px 8px 0 0;
+
+}
+
+.file-list {
+    clear: right;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+
+    max-height: 0;
+
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+
+    background-color: #2a2a2a;
+    border-radius: 8px;
+
+    transition: max-height 0.3s;
+}
+
+.file-list-container:hover .file-list {
+    max-height: 50vh;
+}
+
+
+.file-list .file {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1vh;
+
+    max-width: 250px;
+
+    padding: 1vh;
+    border-radius: 8px;
+    background-color: #2a2a2a;
+}
+
+.file-list .file span {
+    word-wrap: anywhere;
 }
