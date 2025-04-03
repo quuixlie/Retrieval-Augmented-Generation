@@ -39,7 +39,8 @@ def __divide_document_into_fragments(document: FileStorage):
     :param document: FileStorage
     :return: list of fragments
     """
-    parsed_document_to_markdown = pymupdf4llm.to_markdown(document)
+    parsed_document_to_markdown = pymupdf4llm.to_markdown(document.read().decode("utf-8"))
+    print(document.read().decode("utf-8"))
 
     # Split the document into fragments
     splitter = RecursiveCharacterTextSplitter(chunk_size=400)
