@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+from .rag import rag_input
+
 
 api_bp = Blueprint("api", __name__)
 
@@ -35,8 +37,6 @@ def upload_documents(conversation_id: int):
         return jsonify({"error": "No files provided"}), 400
 
     for file in files:
-        # print(file)
-        # Todo :: Process files
-        pass
+        rag_input.process_document(conversation_id, file)
 
     return jsonify({"message": "Files uploaded"}), 200
