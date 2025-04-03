@@ -45,7 +45,12 @@ def upload(conversation_id: int):
         path = os.path.join(Config.UPLOAD_DIRECTORY, path_name)
 
         try:
+
             file.save(path)
+
+            # Resetting the cursor to allow reading the file again
+            file.seek(0)
+
             db.session.add(document)
             db.session.commit()
         except Exception as e:
