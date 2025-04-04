@@ -1,9 +1,10 @@
 from pymupdf import Document
 from werkzeug.datastructures import FileStorage
 from sentence_transformers import SentenceTransformer
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import MarkdownTextSplitter
 import pymupdf4llm
 from . import vector_db
+from openai import OpenAI
 
 
 def process_document(conversation_id: int, document: FileStorage):
@@ -43,7 +44,7 @@ def __divide_document_into_fragments(document: FileStorage):
     parsed_document_to_markdown = pymupdf4llm.to_markdown(doc = document)
 
     # Split the document into fragments
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000)
+    splitter = MarkdownTextSplitter()
     fragments = splitter.split_text(parsed_document_to_markdown)
 
     return fragments
@@ -70,4 +71,28 @@ def process_query(conversation_id: int, query: str):
         for item in result:
             result = item["entity"]["text"]
 
-    return result
+    # Send request to LLM
+    response = __get_response_from_llm(query, result)
+
+    return response
+
+
+def __get_response_from_llm(prompt: str, document: str):
+    initial_prompt = """"Jestes nikim. Kim jestes? Jestes frajerem. Kim jestes? Odpowiedz na pytania."""
+    api_key = "Buy your own API ACCESS NIGGERS"
+
+    # Create a prompt in proper format
+    prompt = initial_prompt + "<ZASOB_ZEWNETRZNY> " + document + "</ZASOB_ZEWNETRZNY>"
+
+    openai_client = OpenAI(
+        api_key = api_key
+    )
+
+    response = openai_client.responses.create(
+        model="gpt-3.5-turbo",
+        instructions=initial_prompt,
+        input=prompt
+    )
+
+    return response.output_text
+
