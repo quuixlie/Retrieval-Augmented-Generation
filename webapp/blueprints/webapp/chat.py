@@ -52,28 +52,22 @@ def send(conversation_id: int):
     response = requests.post(url, data={"query": message})
 
     try:
-        json = response.json()
+        responseJSON = response.json()
 
-        print(json)
+        if responseJSON.get("error", None):
+            return jsonify({"error": responseJSON.get("error")})
 
-        if json.get("error", None):
-            return jsonify({"error": json.get("error")})
+        response_message = responseJSON.get("message", None)
 
-        return jsonify({"message": "dsada"})
-    except Exception as e:
-        print(e)
-        return jsonify({"error": "Unknown error occurred"}), 500
-
-    response = "Some test rag response"
-
-    print("Message: ", message)
-
-    try:
-        new_message = ChatMessageModel(conversation_id=conversation_id, message=message, response=response)
+        # Saving to the db
+        new_message = ChatMessageModel(conversation_id=conversation_id, message=message, response=response_message)
         db.session.add(new_message)
         db.session.commit()
+
+        print(response_message)
+
+        return jsonify({"rag_response": response_message})
+
     except Exception as e:
         print(e)
         return jsonify({"error": "Unknown error occurred"}), 500
-
-    return jsonify({"rag_response": response})
