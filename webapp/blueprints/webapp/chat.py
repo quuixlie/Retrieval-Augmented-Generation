@@ -1,6 +1,8 @@
+import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
 from app import db
+from config import Config
 from .models import ChatMessageModel, ConversationModel, DocumentModel
 
 chat_bp = Blueprint("chat", __name__)
@@ -45,7 +47,22 @@ def send(conversation_id: int):
     if not message:
         return jsonify({"error": "Message not provided"}), 400
 
-    # Todo :: Implement sending requests to RAG api
+    url = Config.API_BASE_URL + url_for("api.index", conversation_id=conversation_id)
+
+    response = requests.post(url, data={"query": message})
+
+    try:
+        json = response.json()
+
+        print(json)
+
+        if json.get("error", None):
+            return jsonify({"error": json.get("error")})
+
+        return jsonify({"message": "dsada"})
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Unknown error occurred"}), 500
 
     response = "Some test rag response"
 
