@@ -1,0 +1,194 @@
+
+.chat-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    width: 60%;
+    height: 100vh;
+
+    align-self: center;
+
+}
+
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+    gap: 2vh;
+
+    width: 100%;
+
+    padding: 12px;
+
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    align-self: center;
+
+}
+
+/* Message bubbles */
+.chat-container .message {
+    max-width: 70%;
+    padding: 12px;
+    border-radius: 8px;
+    text-wrap: wrap;
+    word-wrap: anywhere;
+}
+
+.chat-container .left {
+    align-self: flex-start;
+    background-color: #2a2a2a;
+    border-bottom-left-radius: 0.4vh;
+}
+
+.chat-container .right {
+    align-self: flex-end;
+    background-color: #5a2a2a;
+    border-bottom-right-radius: 0.4vh;
+}
+
+/* Chat input container */
+.chat-input-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    width: 100%;
+
+    border-radius: 8px;
+
+    box-shadow: 0 -0.2vh 1vw rgba(0, 0, 0, 0.3);
+    background-color: #1f1f1f;
+}
+
+.chat-input-area {
+    display: flex;
+
+    justify-content: center;
+
+    flex: 1;
+    gap: 1.2vh;
+}
+
+.chat-input-area textarea {
+    flex: 1;
+    padding: 1.2vh 1.6vw;
+    border: 0.1vw solid #333;
+    border-radius: 0.8vh;
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    resize: none;
+    min-height: 2vh;
+    max-height: 12vh;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.chat-input-area textarea:focus {
+    border-color: #5a2a2a;
+}
+
+.chat-input-area button {
+    padding: 1.2vh 2vw;
+    border: none;
+    border-radius: 0.8vh;
+    background-color: #5a2a2a;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.chat-input-area button:hover {
+    background-color: #6a3a3a;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 0.8vw;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 0.4vw;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+
+.file-list-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    border-radius: 8px;
+    padding: 1vh;
+
+}
+
+
+.file-list-button {
+    border: none;
+    padding: 12px;
+    background: #2a2a2a;
+    color: white;
+
+    width: min-content;
+
+    float: right;
+
+    border-radius: 8px;
+}
+
+.file-list-container:hover .file-list-button {
+    border-radius: 8px 8px 0 0;
+
+}
+
+.file-list {
+    clear: right;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+
+    max-height: 0;
+
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+
+    background-color: #2a2a2a;
+    border-radius: 8px;
+
+    transition: max-height 0.3s;
+}
+
+.file-list-container:hover .file-list {
+    max-height: 50vh;
+}
+
+
+.file-list .file {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1vh;
+
+    max-width: 250px;
+
+    padding: 1vh;
+    border-radius: 8px;
+    background-color: #2a2a2a;
+}
+
+.file-list .file span {
+    word-wrap: anywhere;
+}

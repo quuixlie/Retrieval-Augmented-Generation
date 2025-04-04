@@ -1,129 +1,58 @@
 {% extends "base.html" %}
 {% block title %}Chat{% endblock %}
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ url_for('webapp.static',filename='chatArea.css') }}"/> {% endblock %}
-
+    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/chat.css') }}"/> {% endblock %}
 {% block content %}
-{% if active_session is defined and active_session is not none %}
-<div class="active-session-indicator">
-    Active session: {{ active_session }}
-</div>
 
-<!-- Chat container -->
-<div class="chat-container-wrapper">
-    <div class="chat-container">
-        {% for message in messages %}
-        <div class="message right">
-            {{ message.message }}
+    <div class="chat-wrapper">
+        <div class="chat-container">
+            {% for message in messages %}
+                <div class="message right">
+                    {{ message.message }}
+                </div>
+                {% if message.response is not none %}
+                    <div class="message left">
+                        {{ message.response }}
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
-        {% if message.response is not none %}
-        <div class="message left">
-            {{ message.response }}
+
+        {% set conversation_id = request.path.split("/")[-1] %}
+
+        <div class="chat-input-container">
+            <label class="btn size-min-content" for="documentInput">
+                <img src="{{ url_for("webapp.static",filename="icons/add_file.svg") }}" alt="" width="24"
+                     height="24">
+            </label>
+            <input class=" hidden" id="documentInput" type="file" name="files" accept="application/pdf"
+                   data-url="{{ url_for("webapp.documents.upload",conversation_id=conversation_id) }}" multiple
+                   required>
+            <form action="{{ url_for('webapp.chat.send',conversation_id=conversation_id) }}" id="messageInput"
+                  class="chat-input-area">
+                <textarea class="text-input" placeholder="Type your message here" required></textarea>
+                <button type="submit">Send</button>
+            </form>
         </div>
-        {% endif %}
-        {% endfor %}
     </div>
-</div>
 
-<!-- Fixed input at bottom (no gap) -->
-<div class="chat-input-container">
-    <form id="messageInput" class="chat-input-area">
-        <textarea class="text-input" placeholder="Type your message here" required></textarea>
-        <button type="submit">Send</button>
-    </form>
-</div>
-
-
-<script defer>
-    let messageInput = document.getElementById('messageInput');
-
-    function createMessage(message, isResponse) {
-        let messageDiv = document.createElement('div');
-        let alignment = isResponse ? 'left' : 'right';
-        messageDiv.classList.add('message', alignment);
-        messageDiv.textContent = message;
-        return messageDiv;
-    }
-
-    function scrollToBottom() {
-        const chatContainer = document.querySelector('.chat-container');
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    let textarea = messageInput.querySelector('textarea');
-    textarea.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            if (event.shiftKey) {
-                // Allow new line
-                event.preventDefault();
-                let cursorPos = textarea.selectionStart;
-                let text = textarea.value;
-                textarea.value = text.substring(0, cursorPos) + "\n" + text.substring(cursorPos);
-                textarea.selectionStart = textarea.selectionEnd = cursorPos + 1;
-            } else {
-                // Submit the form
-                event.preventDefault();
-                messageInput.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-            }
-        }
-    });
-
-    messageInput.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const inputElement = messageInput.querySelector('textarea');
-        let input = inputElement.value;
-
-        inputElement.value = '';
-
-        if (input.length <= 0)
-            return;
-
-        // Creating the message
-        const userMessage = createMessage(input, false);
-        document.querySelector('.chat-container').appendChild(userMessage);
-        scrollToBottom()
-
-        const loadingSpinner = document.createElement('div');
-        loadingSpinner.classList.add('loader', 'flex-self-center');
-
-        // Loading spinner
-        document.querySelector('.chat-container').appendChild(loadingSpinner);
-
-        const formData = new FormData();
-        formData.append("message", input);
-
-        fetch("{{ url_for('webapp.chat.send') }}", {
-            method: "POST",
-            body: formData
-        }).then(async (response) => {
-            return response.json()
-        }).then((data) => {
-
-            if (data["rag_response"]) {
-                // Creating the response
-                const ragMessage = createMessage(data["rag_response"], true);
-                document.querySelector('.chat-container').appendChild(ragMessage);
-
-            } else if (data["error"]) {
-                const errorMessage = document.createElement('div');
-                errorMessage.textContent = data["error"];
-                errorMessage.classList.add('rounded-corners', 'pad-16', 'bg-error', 'flex-self-center');
-                document.querySelector('.chat-container').appendChild(errorMessage);
-            }
-            scrollToBottom()
+    <div class="file-list-container">
+        <button class="file-list-button">Attached documents</button>
+        <div class="file-list">
+            {% if attached_documents | length > 0 %}
+                {% for file in attached_documents %}
+                    <div class="file">
+                        <img src="{{ url_for("webapp.static",filename="icons/file.svg") }}" width="32" height="32"
+                             alt=""/>
+                        <span>{{ file.name }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                No files attached
+            {% endif %}
+        </div>
+    </div>
 
 
-        }).catch((error) => {
-            userMessage.remove()
-        }).finally(() => {
-            // Removing the loading spinner
-            loadingSpinner.remove();
-        });
-    })
-</script>
-{% else %}
-<div>
-    No active session. Please select or create one.
-</div>
-{% endif %}
+    <script src="{{ url_for('webapp.static', filename="scripts/chatHandler.js") }}"></script>
 {% endblock %}

@@ -3,13 +3,35 @@ from sqlalchemy.orm import backref
 from app import db
 
 
-class SessionModel(db.Model):
-    __tablename__ = "sessions"
+class ConversationModel(db.Model):
+    __tablename__ = "conversations"
 
-    name = db.Column(db.String(50), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(64))
 
     def __repr__(self):
-        return f"Session(name={self.name})"
+        return f"Conversation(name={self.name})"
+
+    @staticmethod
+    def exists(id: int) -> bool:
+        return ConversationModel.query.filter_by(id=id).first() is not None
+
+
+class DocumentModel(db.Model):
+    __tablename__ = "documents"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id, ondelete="CASCADE", onupdate="CASCADE"))
+
+    """Original name of the file"""
+    name = db.Column(db.String(64))
+
+    """Name of the file that is stored on the server"""
+    path = db.Column(db.String(256))
+
+    @staticmethod
+    def exists_with_path(path: str) -> bool:
+        return DocumentModel.query.filter_by(path=path).first() is not None
 
 
 class ChatMessageModel(db.Model):
@@ -17,7 +39,7 @@ class ChatMessageModel(db.Model):
 
     ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # Chat messages are associated with a session
-    session_name = db.Column(db.String(50), db.ForeignKey(SessionModel.name, ondelete="CASCADE", onupdate="CASCADE"))
-    message = db.Column(db.String(512))
+    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id, ondelete="CASCADE", onupdate="CASCADE"))
+    message = db.Column(db.String(2048))
     # Each message in the chat should have a response
-    response = db.Column(db.String(512), nullable=True)
+    response = db.Column(db.String(4096), nullable=True)

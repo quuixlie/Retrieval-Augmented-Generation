@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href= "{{ url_for('webapp.static',filename='styles.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/common.css') }}"/>
     {% block stylesheets %}  {% endblock %}
     <title>{% block title %}TITLE NOT SET{% endblock %}</title>
     {% block scripts %}  {% endblock %}
 </head>
 <body>
-<div id="base-container">
+<div class="flex-row" style="height:100vh">
     {% include "side_navigation.html" %}
 
-    <main class="flex-col fill-width flex-content-center">
+    <main class="flex-col flex-1">
         {% block content %}
         {% endblock %}
     </main>

@@ -52,6 +52,14 @@ def create_app() -> Flask:
             for k, v in session_data.default_session_data().items():
                 session.setdefault(k, v)
 
+    # Injecting conversations list to every template so it doesn't have to be manually passed
+    from blueprints.webapp.models import ConversationModel
+
+    @app.context_processor
+    def inject_conversations():
+        conversations = ConversationModel.query.all()
+        return dict(conversations=conversations)
+
     return app
 
 
