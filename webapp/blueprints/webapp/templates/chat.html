@@ -22,12 +22,11 @@
 
         <div class="chat-input-container">
             <label class="btn size-min-content" for="documentInput">
-                <img src="{{ url_for("webapp.static",filename="icons/add_file.svg") }}" alt="" width="24"
+                <img src="{{ url_for('webapp.static',filename='icons/add_file.svg') }}" alt="" width="24"
                      height="24">
             </label>
             <input class=" hidden" id="documentInput" type="file" name="files" accept="application/pdf"
-                   data-url="{{ url_for("webapp.documents.upload",conversation_id=conversation_id) }}" multiple
-                   required>
+                   data-url="{{ url_for('webapp.documents.upload', conversation_id=conversation_id) }}" multiple required>
             <form action="{{ url_for('webapp.chat.send',conversation_id=conversation_id) }}" id="messageInput"
                   class="chat-input-area">
                 <textarea class="text-input" placeholder="Type your message here" required></textarea>
@@ -54,5 +53,5 @@
     </div>
 
 
-    <script src="{{ url_for('webapp.static', filename="scripts/chatHandler.js") }}"></script>
+    <script src="{{ url_for('webapp.static', filename='scripts/chatHandler.js') }}"></script>
 {% endblock %}

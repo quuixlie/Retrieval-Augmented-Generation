@@ -1,34 +1,74 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const sidebarButtons = document.getElementById("sidebarButtonsContainer");
+document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('toggleNav');
     const navBar = document.getElementById('navBar');
+    const body = document.body;
+    const newChatButton = document.getElementById('newChatButton');
+    const placeholder = document.getElementById('newChatButtonPlaceholder');
+    // Store the original container where the button sits when closed
+    // This assumes the button is placed directly after navBar in the HTML body/container
+    const buttonOriginalContainer = navBar.parentNode;
+    const buttonNextSibling = navBar.nextSibling; // Element after navBar (or null)
+
+    // --- Configuration ---
+    const sidebarWidth = 300; // MUST MATCH .nav-container width in CSS
+    const closedPosition = '10px'; // MUST MATCH .toggle-btn left in CSS (closed state)
+    const openPosition = `${sidebarWidth + 10}px`; // Position next to open sidebar
+
 
     const savedState = localStorage.getItem('sidebarState');
-    if (savedState === 'open') {
-        navBar.classList.add('visible');
-        toggleBtn.textContent = '‹';
-    } else {
-        toggleBtn.textContent = '›';
+
+    function moveButtonOutside() {
+        // Insert the button back into its original spot outside the nav
+        // Checks if there was an element after navBar to insert before, otherwise appends
+        if (buttonNextSibling) {
+             buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
+        } else {
+             buttonOriginalContainer.appendChild(newChatButton);
+        }
+        newChatButton.classList.remove('state-open');
+        newChatButton.classList.add('state-closed');
+        newChatButton.textContent = '+'; // Ensure correct text/icon
     }
 
-    toggleBtn.addEventListener('click', function () {
-        const isOpening = !navBar.classList.contains('visible');
+    function moveButtonInside() {
+        placeholder.appendChild(newChatButton); // Move button into placeholder
+        newChatButton.classList.remove('state-closed');
+        newChatButton.classList.add('state-open');
+        // newChatButton.textContent = 'New Chat'; // Change text when inside (optional)
+    }
 
-        navBar.classList.toggle('visible');
 
-        if (isOpening) {
+    function setSidebarState(isOpen) {
+        if (isOpen) {
+            navBar.classList.add('visible');
+            body.classList.add('sidebar-open');
             toggleBtn.textContent = '‹';
+            toggleBtn.style.left = openPosition;
+            moveButtonInside(); // Move button INTO sidebar
             localStorage.setItem('sidebarState', 'open');
         } else {
+            navBar.classList.remove('visible');
+            body.classList.remove('sidebar-open');
             toggleBtn.textContent = '›';
+            toggleBtn.style.left = closedPosition;
+            moveButtonOutside(); // Move button OUT of sidebar
             localStorage.setItem('sidebarState', 'closed');
         }
+    }
+
+    if (savedState === 'open') {
+        moveButtonInside();
+        setSidebarState(true);
+    } else {
+        moveButtonOutside();
+        setSidebarState(false);
+    }
+
+    toggleBtn.addEventListener('click', function() {
+        const isCurrentlyOpen = navBar.classList.contains('visible');
+        setSidebarState(!isCurrentlyOpen); // Toggle the state
     });
-
-
 });
-
-
 // Context menu
 
 let contextMenu = null;
