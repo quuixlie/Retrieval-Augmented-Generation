@@ -1,3 +1,5 @@
+import time
+
 import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
@@ -8,14 +10,8 @@ from .models import ChatMessageModel, ConversationModel, DocumentModel
 chat_bp = Blueprint("chat", __name__)
 
 
-@chat_bp.route('/', methods=["GET"])
-def index():
-    # Empty chat
-    return render_template('chat.html')
-
-
 @chat_bp.route('/<int:conversation_id>', methods=["GET"])
-def chat(conversation_id: int):
+def index(conversation_id: int):
     conversation = ConversationModel.query.filter(ConversationModel.id == conversation_id).first()
 
     if not conversation:
@@ -30,11 +26,29 @@ def chat(conversation_id: int):
 
 @chat_bp.route('/new', methods=['GET'])
 def new():
-    new_conversation = ConversationModel(title="New conversation")
+    new_conversation = ConversationModel(title="Conversation")
     db.session.add(new_conversation)
     db.session.commit()
 
-    return redirect(url_for('webapp.chat.chat', conversation_id=new_conversation.id))
+    return redirect(url_for('webapp.chat.index', conversation_id=new_conversation.id))
+
+
+@chat_bp.route('/delete/<int:current_conversation_id>/<int:to_delete_id>', methods=["GET"])
+def delete(current_conversation_id: int, to_delete_id: int):
+    if not ConversationModel.exists(current_conversation_id):
+        print(f"Invalid active conversation during delete id: {current_conversation_id} Aborting delete")
+        return redirect(url_for('webapp.chat.index'))
+
+    if not ConversationModel.exists(to_delete_id):
+        print(f"Conversation {to_delete_id} does not exist - cannot delete it")
+        return redirect(url_for('webapp.chat.index'))
+
+    db.session.delete(ConversationModel.query.filter(ConversationModel.id == to_delete_id).first())
+    db.session.commit()
+
+    if to_delete_id == current_conversation_id:
+        return redirect(url_for('webapp.chat.index'))
+    return redirect(url_for('webapp.chat.index', conversation_id=current_conversation_id))
 
 
 @chat_bp.route('/send/<int:conversation_id>', methods=["POST"])

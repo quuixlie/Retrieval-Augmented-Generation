@@ -2,9 +2,12 @@
 Map of navigation items -> its "route" within webapp blueprint
 Requires the styles.css file
 #}
-{% block stylesheets %} <link rel="stylesheet" href= "{{ url_for('webapp.static',filename='navBar.css') }}"/> {% endblock %}
-{% block scripts %} <script src="{{ url_for('webapp.static', filename='toggleSidebar.js') }}"></script>{% endblock %}
-{% set navTabs = [{"name":"Settings","route":"settings"}] %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/navBar.css') }}"/> {% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('webapp.static', filename='scripts/navbarHandler.js') }}"></script>{% endblock %}
+{% set navTabs = [{"name":"Settings","route":"cfg.index"}] %}
+{% set conversation_id = request.path.split("/")[-1] | int %}
 
 <button id="toggleNav" class="toggle-btn">‹</button>
 
@@ -12,8 +15,13 @@ Requires the styles.css file
 
     <ul id="topButtonContainer">
 
-        <div id="newChatButtonPlaceholder"></div>
-<!--        <button id="searchButton" class="search-btn">S</button>-->
+        <li>
+            <a href="{{ url_for("webapp.chat.new") }}">
+                <div id="newChatButtonPlaceholder">
+                </div>
+            </a>
+        </li>
+        <!--        <button id="searchButton" class="search-btn">S</button>-->
     </ul>
 
     <ul>
@@ -29,13 +37,30 @@ Requires the styles.css file
     {# --- Existing Chat History --- #}
     <div class="chat-history">
         <ul id="chatList">
-            {% for chat in chat_sessions %}
-                <li class="nav-item">
+            {% for conv in conversations %}
+                <li class="flex-row nav-item {{ "active" if request.endpoint == 'webapp.chat.index' and  conversation_id == conv.id else "" }}">
                     {# Make sure this link goes somewhere, e.g., /chat/{{ chat.id }} #}
-                    <a href="">{{ chat.title }}</a>
+                    <a class="flex-1"
+                       href="{{ url_for("webapp.chat.index",conversation_id=conv.id) }}">{{ conv.title }}</a>
+                    <button class="btn-icon" data-conversation-id="{{ conv.id }}" onclick="toggleMenu(event)">
+                        <img src="{{ url_for('webapp.static',filename="icons/view_more.svg") }}"
+                             aria-label="Expand submenu"
+                             alt="" width="16" height="16">
+                    </button>
                 </li>
             {% endfor %}
         </ul>
     </div>
+
+    {# --- Context Menu for Conversations --- #}
+    <div id="conversationContextMenu" class="conversation-context-menu">
+        <a class="btn-icon conversation-context-entry delete"
+           href="{{ url_for("webapp.chat.delete",current_conversation_id=conversation_id,to_delete_id=-1) }}">
+            <span>Delete </span>
+            <img src="{{ url_for('webapp.static',filename="icons/trashcan.svg") }}" aria-label="Delete conversation"
+                 alt="" width="16" height="16">
+        </a>
+    </div>
+
 </nav>
 <button id="newChatButton" class="new-chat-btn">+</button>

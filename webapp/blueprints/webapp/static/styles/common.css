@@ -120,6 +120,10 @@ body {
     flex-grow: 1;
 }
 
+.space-between {
+    justify-content: space-between;
+}
+
 .no-decor {
     text-decoration: none;
     list-style: none;
@@ -147,6 +151,10 @@ body {
 
 .bg-success {
     background-color: #4d8d4d;
+}
+
+.bg-info {
+    background-color: #4d8d8d;
 }
 
 .pad-16 {

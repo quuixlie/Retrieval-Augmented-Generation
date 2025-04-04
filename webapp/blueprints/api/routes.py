@@ -35,7 +35,6 @@ def upload_documents(conversation_id: int):
         return jsonify({"error": "No files provided"}), 400
 
     for file in files:
-        # print(file)
         # Todo :: Process files
         pass
 
