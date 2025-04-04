@@ -13,28 +13,15 @@ from werkzeug.utils import secure_filename
 from app import db
 from blueprints.webapp.models import ConversationModel, DocumentModel
 from config import Config
-from session_data import get_session
 
 documents_bp = Blueprint("documents", __name__)
 
 
-@documents_bp.route('/', methods=["GET"])
-def index():
-    # Set when the user tried to create,modify or select a session
-    action_success = request.args.get("success", None, type=lambda x: x == "True")
-    action_msg = request.args.get("msg", None)
-
-    # TODO :: Query the documents from the db
-    documents = ["TEST_DOC1", "TEST_DOC2", "TEST_DOC3", "TEST_DOC4", "TEST_DOC5"]
-
-    active_session = get_session()['active_session_name'] if get_session()['active_session_name'] else None
-
-    return render_template('documents.html', active_session=active_session, documents=documents,
-                           action_success=action_success, action_msg=action_msg)
-
-
 @documents_bp.route('/upload/<int:conversation_id>', methods=["POST"])
 def upload(conversation_id: int):
+
+    time.sleep(10)
+
     if not ConversationModel.exists(conversation_id):
         return jsonify({"error": "Conversation does not exist"})
 

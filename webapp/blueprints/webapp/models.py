@@ -18,6 +18,9 @@ class ConversationModel(db.Model):
                                  db.ForeignKey("configurations.id", ondelete="SET NULL", onupdate="CASCADE"),
                                  nullable=True)
 
+    messages = db.relationship("ChatMessageModel", cascade="all, delete-orphan", backref="conversation")
+    documents = db.relationship("DocumentModel", cascade="all, delete-orphan", backref="conversation")
+
     def __repr__(self):
         return f"Conversation(id={self.id}, title={self.title},active_config_id={self.active_config_i}"
 
@@ -31,7 +34,7 @@ class ChatMessageModel(db.Model):
 
     ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # Chat messages are associated with a session
-    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id, ondelete="CASCADE", onupdate="CASCADE"))
+    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id))
     message = db.Column(db.String(2048))
     # Each message in the chat should have a response
     response = db.Column(db.String(4096), nullable=True)
@@ -49,7 +52,7 @@ class DocumentModel(db.Model):
     __tablename__ = "documents"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id, ondelete="CASCADE", onupdate="CASCADE"))
+    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id))
 
     """Original name of the file"""
     name = db.Column(db.String(64))

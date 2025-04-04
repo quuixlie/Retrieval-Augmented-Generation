@@ -76,7 +76,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // Context menu
 
 let contextMenu = null;
-let activeConversationId = null;
+let selectedButton = null;
+let selectedConversationId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     contextMenu = document.getElementById("conversationContextMenu")
@@ -98,31 +99,52 @@ function hideMenu() {
     } else {
         console.error("Context menu not found");
     }
-}
-
-function updateButtonURL(button, id) {
-    const action = button.href
-    const urlParts = action.split("/");
-    urlParts[urlParts.length - 1] = id;
-    button.href = urlParts.join("/")
+    selectedButton = null;
+    selectedConversationId = null;
 }
 
 function toggleMenu(event) {
     event.stopPropagation()
 
-    const activeButton = event.target.closest("button");
-    const rect = activeButton.getBoundingClientRect();
+    selectedButton = event.target.closest("button");
+    const rect = selectedButton.getBoundingClientRect();
 
-    console.log(activeButton)
+    console.log(selectedButton)
 
-    activeConversationId = activeButton.getAttribute("data-conversation-id")
-
-    // Updating buttons
-    const deleteButton = contextMenu.querySelector("a.delete")
-
-    updateButtonURL(deleteButton, activeConversationId)
-
+    selectedConversationId = selectedButton.getAttribute("data-conversation-id")
 
     showMenu(rect.x, rect.y);
+}
+
+function deleteConversation(deleteURL, current_conv_id, redirectURL) {
+    if (!selectedConversationId) {
+        console.error("No active conversation ID")
+        return
+    }
+    const listentry = selectedButton.closest('li');
+
+    const url = `${deleteURL.slice(0, deleteURL.lastIndexOf("/"))}/${selectedConversationId}`
+    console.log(url)
+
+    fetch(url, {
+        method: "DELETE",
+    }).then((response) => {
+        if (response.ok) {
+            listentry.remove()
+
+            if (current_conv_id == selectedConversationId) {
+                window.location.replace(redirectURL)
+            }
+
+            hideMenu()
+            console.log("Conversation deleted successfully")
+
+        } else {
+            console.error("Error deleting conversation")
+        }
+    }).catch((error) => {
+        console.error("Error deleting conversation", error)
+    });
+
 }
 

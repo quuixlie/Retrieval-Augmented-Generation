@@ -26,13 +26,9 @@
     align-self: center;
 
 
-    padding-right:5px;
+    padding-right: 5px;
     margin-bottom: 50px;
 
-}
-
-.chat-container .loader {
-    margin-bottom: 25vh;
 }
 
 /* Message bubbles */

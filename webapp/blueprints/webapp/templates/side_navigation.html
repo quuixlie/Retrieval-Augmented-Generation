@@ -7,7 +7,6 @@ Requires the styles.css file
 {% block scripts %}
     <script src="{{ url_for('webapp.static', filename='scripts/navbarHandler.js') }}"></script>{% endblock %}
 {% set navTabs = [{"name":"Settings","route":"cfg.index"}] %}
-{% set conversation_id = request.path.split("/")[-1] | int %}
 
 <button id="toggleNav" class="toggle-btn">‹</button>
 
@@ -54,13 +53,14 @@ Requires the styles.css file
 
     {# --- Context Menu for Conversations --- #}
     <div id="conversationContextMenu" class="conversation-context-menu">
-        <a class="btn-icon conversation-context-entry delete"
-           href="{{ url_for("webapp.chat.delete",current_conversation_id=conversation_id,to_delete_id=-1) }}">
+        {# After deleting a conversation user is redirected to the first conversation. if current conversation == first conversation redirect to the second one. #}
+        {% set redirectURL = (url_for("webapp.chat.index",conversation_id=(conversations[0].id if conversation_id != conversations[0].id else conversations[1].id)) if conversations | length > 1 else url_for("webapp.cfg.index")) %}
+        <button class="btn-icon conversation-context-entry delete"
+                onclick="deleteConversation('{{ url_for("webapp.chat.delete",id=-1) }}',{{ conversation_id if conversation_id is defined else "null" }},'{{ redirectURL }}')">
             <span>Delete </span>
             <img src="{{ url_for('webapp.static',filename="icons/trashcan.svg") }}" aria-label="Delete conversation"
                  alt="" width="16" height="16">
-        </a>
+        </button>
     </div>
-
 </nav>
 <button id="newChatButton" class="new-chat-btn">+</button>

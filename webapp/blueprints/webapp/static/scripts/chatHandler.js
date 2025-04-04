@@ -4,28 +4,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('messageInput');
 
     // Creating the spinner
-    const loadingSpinner = document.createElement('div');
-    loadingSpinner.classList.add('loader', 'hidden', 'flex-self-center');
+    const loader = document.createElement('div');
+    const spinner = document.createElement('div');
+    loader.style.transition = "all 0.5s ease-in-out";
+    loader.appendChild(spinner);
+    loader.classList.add("flex-col", "flex-content-center", "shrink", "flex-self-center")
+    loader.style.display = "none"
+    spinner.classList.add('loader');
+
     // height of .loader class
-    document.querySelector('.chat-container').appendChild(loadingSpinner);
+    document.querySelector('.chat-container').appendChild(loader);
 
     function showLoadingSpinner() {
-        // remove find existing spinner and put it at the end
-        const existingSpinner = document.querySelector('.chat-container').querySelector('.loader');
-        if (existingSpinner) {
-            existingSpinner.remove();
-            document.querySelector('.chat-container').appendChild(existingSpinner);
-        }
-        loadingSpinner.classList.remove('hidden');
+
+        loader.remove();
+        document.querySelector('.chat-container').appendChild(loader);
+
+        loader.classList.replace('shrink', 'expand');
+
+        loader.style.display = "block";
+        loader.style.marginBottom = "100px";
+        loader.style.marginTop = "50px";
     }
 
     function hideLoadingSpinner() {
-        loadingSpinner.classList.add('hidden');
+        loader.classList.replace('expand', 'shrink');
+        loader.style.marginBottom = "0px";
+        loader.style.marginTop = "0px";
+
+        loader.remove();
+        document.querySelector('.chat-container').appendChild(loader);
     }
 
-
-    // Wait for the loading spinner to finish loading
-    // Disables are the buttons that could bo in conflict
+    // Disables the buttons that could be in conflict
     function lockChat() {
         showLoadingSpinner()
         scrollToBottom()
@@ -55,8 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addMessageToChat(message) {
+
+
         let container = document.querySelector('.chat-container');
         container.appendChild(message);
+
+        loader.remove()
+        document.querySelector('.chat-container').appendChild(loader);
     }
 
     function chatError(errorMessage) {

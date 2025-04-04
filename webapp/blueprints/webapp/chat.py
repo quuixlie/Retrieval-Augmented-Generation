@@ -15,13 +15,14 @@ def index(conversation_id: int):
     conversation = ConversationModel.query.filter(ConversationModel.id == conversation_id).first()
 
     if not conversation:
-        return redirect(url_for('webapp.sessions.index', success=False, msg="Conversation does not exist"))
+        return redirect(url_for('webapp.chat.new'))
 
     messages = ChatMessageModel.query.filter(ChatMessageModel.conversation_id == conversation_id).all()
 
     attached_documents = DocumentModel.query.filter(DocumentModel.conversation_id == conversation_id).all()
 
-    return render_template('chat.html', messages=messages, attached_documents=attached_documents)
+    return render_template('chat.html', messages=messages, attached_documents=attached_documents,
+                           conversation_id=conversation_id)
 
 
 @chat_bp.route('/new', methods=['GET'])
@@ -30,25 +31,28 @@ def new():
     db.session.add(new_conversation)
     db.session.commit()
 
+    print("Created conversation with id: ", new_conversation.id)
+
     return redirect(url_for('webapp.chat.index', conversation_id=new_conversation.id))
 
 
-@chat_bp.route('/delete/<int:current_conversation_id>/<int:to_delete_id>', methods=["GET"])
-def delete(current_conversation_id: int, to_delete_id: int):
-    if not ConversationModel.exists(current_conversation_id):
-        print(f"Invalid active conversation during delete id: {current_conversation_id} Aborting delete")
-        return redirect(url_for('webapp.chat.index'))
+@chat_bp.route('/delete/<int:id>', methods=["DELETE"])
+def delete(id: int):
+    if not id:
+        print("No del_id provided")
+        return "", 400
 
-    if not ConversationModel.exists(to_delete_id):
-        print(f"Conversation {to_delete_id} does not exist - cannot delete it")
-        return redirect(url_for('webapp.chat.index'))
+    if not ConversationModel.exists(id):
+        print(f"Conversation {id} does not exist - cannot delete it")
 
-    db.session.delete(ConversationModel.query.filter(ConversationModel.id == to_delete_id).first())
+        return "", 400
+
+    db.session.delete(ConversationModel.query.filter(ConversationModel.id == id).first())
     db.session.commit()
 
-    if to_delete_id == current_conversation_id:
-        return redirect(url_for('webapp.chat.index'))
-    return redirect(url_for('webapp.chat.index', conversation_id=current_conversation_id))
+    print(ConversationModel.query.filter(ConversationModel.id == id).first())
+
+    return "", 200
 
 
 @chat_bp.route('/send/<int:conversation_id>', methods=["POST"])
