@@ -17,9 +17,11 @@ def index(conversation_id: int):
     if not query:
         return jsonify({"error": "Query not provided"}), 400
 
-    # TODO :: RAG
+    # Process the query
+    print(f"Processing query: {query}")
+    result = rag_input.process_query(conversation_id, query)
 
-    return jsonify({"message": "Message from rag"}), 200
+    return jsonify({"message": f"{result}"}), 200
 
 
 #

@@ -1,3 +1,4 @@
+from pymupdf import Document
 from werkzeug.datastructures import FileStorage
 from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -25,12 +26,11 @@ def process_document(conversation_id: int, document: FileStorage):
 
         data.append({
             "text": fragment,
-            "vector": embedding.tolist()
+            "embedding": embedding.tolist()
         })
 
     # Insert data into the vector database
     db.insert_data(collection_name, data)
-
 
 
 def __divide_document_into_fragments(document: FileStorage):
@@ -39,11 +39,35 @@ def __divide_document_into_fragments(document: FileStorage):
     :param document: FileStorage
     :return: list of fragments
     """
-    parsed_document_to_markdown = pymupdf4llm.to_markdown(document.read().decode("utf-8"))
-    print(document.read().decode("utf-8"))
+    document = Document(stream = document.read(), filetype="pdf")
+    parsed_document_to_markdown = pymupdf4llm.to_markdown(doc = document)
 
     # Split the document into fragments
     splitter = RecursiveCharacterTextSplitter(chunk_size=400)
     fragments = splitter.split_text(parsed_document_to_markdown)
 
     return fragments
+
+
+def process_query(conversation_id: int, query: str):
+    """
+    Process the query to extract relevant information.
+    """
+    db = vector_db.VectorDB()
+
+    # Recreate collection name
+    collection_name = f"conversation_{conversation_id}"
+
+    # Embedding
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    query_embedding = model.encode(query).tolist()
+
+    # Search the vector database
+    results = db.search(collection_name, query_embedding)
+    result = ""
+
+    for result in results:
+        for item in result:
+            result = item["entity"]["text"]
+
+    return result

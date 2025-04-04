@@ -1,4 +1,4 @@
-from pymilvus import MilvusClient, DataType, CollectionSchema
+from pymilvus import MilvusClient, DataType, CollectionSchema, Collection, connections
 
 
 class VectorDB:
@@ -57,3 +57,18 @@ class VectorDB:
         Insert data into the vector database.
         """
         self.client.insert(collection_name, data = data)
+
+
+    def search(self, collection_name: str, query_embedding: list):
+        """
+        Search for similar vectors in the vector database.
+        """
+        search_params = {
+            "metric_type": "COSINE",
+            "params": {"nprobe": 10}
+        }
+
+        results = self.client.search(collection_name, anns_field = "embedding", data = query_embedding, search_params = search_params,
+                                     limit = 1)
+
+        return results
