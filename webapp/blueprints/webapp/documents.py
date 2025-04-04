@@ -1,3 +1,8 @@
+import time
+from time import sleep
+
+import pymupdf
+import pymupdf4llm
 import requests
 import os
 from uuid import UUID
@@ -35,6 +40,8 @@ def upload(conversation_id: int):
 
     files = request.files.getlist("files")
 
+    print("files:", files)
+
     for file in files:
         path_name = secure_filename(str(UUID(bytes=os.urandom(16))) + ".pdf")
         while DocumentModel.exists_with_path(path_name):
@@ -58,7 +65,6 @@ def upload(conversation_id: int):
             return jsonify({"error": "Unknown error occurred"}), 500
 
     url = Config.API_BASE_URL + url_for("api.upload_documents", conversation_id=conversation_id)
-
     response = requests.post(url, files=[("files", file) for file in files])
 
     try:
@@ -69,7 +75,9 @@ def upload(conversation_id: int):
         if json.get("error", None):
             return jsonify({"error": json.get("error")})
 
-        return jsonify({"message": "dsada"})
+        conv_docs = DocumentModel.query.filter(DocumentModel.conversation_id == conversation_id).all()
+
+        return render_template("chat_file_list.html", attached_documents=conv_docs), 200
 
     except Exception as e:
         print(e)

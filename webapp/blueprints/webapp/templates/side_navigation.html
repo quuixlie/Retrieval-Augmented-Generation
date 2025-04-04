@@ -3,41 +3,64 @@ Map of navigation items -> its "route" within webapp blueprint
 Requires the styles.css file
 #}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/navBar.css') }}"/>
-{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/navBar.css') }}"/> {% endblock %}
 {% block scripts %}
-    <script src="{{ url_for('webapp.static', filename='scripts/navbarHandler.js') }}" defer></script>
-{% endblock %}
+    <script src="{{ url_for('webapp.static', filename='scripts/navbarHandler.js') }}"></script>{% endblock %}
+{% set navTabs = [{"name":"Settings","route":"cfg.index"}] %}
+{% set conversation_id = request.path.split("/")[-1] | int %}
+
+<button id="toggleNav" class="toggle-btn">‹</button>
 
 <nav id="navBar" class="nav-container">
-    <div id="sidebarButtonsContainer">
-        <button id="toggleNav" class="btn toggle-btn">‹</button>
-        <a href="{{ url_for("webapp.chat.new") }}">
-            <button id="newChat" class="btn new-chat-btn">+</button>
-        </a>
-    </div>
-    <ul class="chats">
-        {% for conv in conversations %}
-            <li class="nav-item {{ "active" if request.endpoint == 'webapp.chat.chat' and request.path.split("/")[-1] | int == conv.id else "" }}">
-                <a href="{{ url_for("webapp.chat.chat",conversation_id=conv.id) }}">
-                    <div>{{ conv.title }} {{ conv.id }}</div>
+
+    <ul id="topButtonContainer">
+
+        <li>
+            <a href="{{ url_for("webapp.chat.new") }}">
+                <div id="newChatButtonPlaceholder">
+                </div>
+            </a>
+        </li>
+        <!--        <button id="searchButton" class="search-btn">S</button>-->
+    </ul>
+
+    <ul>
+        {% for tab in navTabs %}
+            <li class="nav-item {{ "active" if request.endpoint == ('webapp.' + tab['route']) else "" }}">
+                <a href="{{ url_for("webapp." + tab['route']) }}">
+                    <div>{{ tab["name"] }}</div>
                 </a>
-                <button class="btn-icon" data-conversation-id="{{ conv.id }}" onclick="toggleMenu(event)">
-                    <img src="{{ url_for('webapp.static',filename="icons/view_more.svg") }}" aria-label="Expand submenu"
-                         alt="" width="16" height="16">
-                </button>
             </li>
         {% endfor %}
     </ul>
-    <div class="bg-gray">
-        settings
+
+    {# --- Existing Chat History --- #}
+    <div class="chat-history">
+        <ul id="chatList">
+            {% for conv in conversations %}
+                <li class="flex-row nav-item {{ "active" if request.endpoint == 'webapp.chat.index' and  conversation_id == conv.id else "" }}">
+                    {# Make sure this link goes somewhere, e.g., /chat/{{ chat.id }} #}
+                    <a class="flex-1"
+                       href="{{ url_for("webapp.chat.index",conversation_id=conv.id) }}">{{ conv.title }}</a>
+                    <button class="btn-icon" data-conversation-id="{{ conv.id }}" onclick="toggleMenu(event)">
+                        <img src="{{ url_for('webapp.static',filename="icons/view_more.svg") }}"
+                             aria-label="Expand submenu"
+                             alt="" width="16" height="16">
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 
+    {# --- Context Menu for Conversations --- #}
     <div id="conversationContextMenu" class="conversation-context-menu">
-        <button class="btn-icon conversation-context-entry" onclick="deleteConversation()">
+        <a class="btn-icon conversation-context-entry delete"
+           href="{{ url_for("webapp.chat.delete",current_conversation_id=conversation_id,to_delete_id=-1) }}">
             <span>Delete </span>
             <img src="{{ url_for('webapp.static',filename="icons/trashcan.svg") }}" aria-label="Delete conversation"
                  alt="" width="16" height="16">
-        </button>
+        </a>
     </div>
+
 </nav>
+<button id="newChatButton" class="new-chat-btn">+</button>

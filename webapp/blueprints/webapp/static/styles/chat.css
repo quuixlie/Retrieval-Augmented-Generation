@@ -8,8 +8,9 @@
 
     align-self: center;
 
-}
+    padding: 3vh 0 3vh;
 
+}
 
 .chat-container {
     display: flex;
@@ -20,12 +21,18 @@
 
     width: 100%;
 
-    padding: 12px;
-
     overflow-y: auto;
     scroll-behavior: smooth;
     align-self: center;
 
+
+    padding-right:5px;
+    margin-bottom: 50px;
+
+}
+
+.chat-container .loader {
+    margin-bottom: 25vh;
 }
 
 /* Message bubbles */
@@ -36,6 +43,7 @@
     text-wrap: wrap;
     word-wrap: anywhere;
 }
+
 
 .chat-container .left {
     align-self: flex-start;
