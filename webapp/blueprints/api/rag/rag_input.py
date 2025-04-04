@@ -43,7 +43,7 @@ def __divide_document_into_fragments(document: FileStorage):
     parsed_document_to_markdown = pymupdf4llm.to_markdown(doc = document)
 
     # Split the document into fragments
-    splitter = RecursiveCharacterTextSplitter(chunk_size=400)
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000)
     fragments = splitter.split_text(parsed_document_to_markdown)
 
     return fragments
