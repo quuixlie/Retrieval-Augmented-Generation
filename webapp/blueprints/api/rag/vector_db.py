@@ -10,8 +10,8 @@ class VectorDB:
         """
         Create a collection in the vector database.
         """
-        self.client.create_collection(collection_name, dimension, schema = self.__create_schema(dimension),
-                                      index = self.__create_index())
+        self.client.create_collection(collection_name, dimension, schema = self.__create_schema(dimension))
+        self.client.create_index(collection_name, index_params = self.__create_index())
 
 
     def __create_schema(self, dimension: int) -> CollectionSchema:
@@ -57,6 +57,7 @@ class VectorDB:
         Insert data into the vector database.
         """
         self.client.insert(collection_name, data = data)
+        self.client.flush(collection_name)
 
 
     def search(self, collection_name: str, query_embedding: list):
@@ -65,10 +66,9 @@ class VectorDB:
         """
         search_params = {
             "metric_type": "COSINE",
-            "params": {"nprobe": 10}
         }
 
         results = self.client.search(collection_name, anns_field = "embedding", data = query_embedding, search_params = search_params,
-                                     limit = 1)
+                                     limit = 1, output_fields = ["text"])
 
         return results

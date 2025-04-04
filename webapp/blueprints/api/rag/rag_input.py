@@ -60,7 +60,7 @@ def process_query(conversation_id: int, query: str):
 
     # Embedding
     model = SentenceTransformer("all-MiniLM-L6-v2")
-    query_embedding = model.encode(query).tolist()
+    query_embedding = [model.encode(query).tolist()]
 
     # Search the vector database
     results = db.search(collection_name, query_embedding)
