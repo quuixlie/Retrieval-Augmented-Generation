@@ -6,12 +6,11 @@ body {
 body.sidebar-open {
     padding-left: 270px;
 }
-
 .nav-container {
     position: fixed;
     top: 0;
     left: 0;
-    width: 250px;
+    width: 300px;
     height: 100vh;
     background-color: #1f1f1f;
     border-right: 1px solid #333;
@@ -34,7 +33,6 @@ body.sidebar-open {
 .nav-container.visible {
     transform: translateX(0);
 }
-
 .toggle-btn {
     position: fixed;
     top: 10px;
@@ -96,6 +94,10 @@ body.sidebar-open {
     background-color: #333;
 }
 
+.new-chat-btn.state-open:hover {
+    background-color: #333;
+}
+
 .nav-container ul {
     list-style: none;
     padding: 0;
@@ -105,28 +107,23 @@ body.sidebar-open {
 }
 
 .nav-container li.nav-item {
+    padding: 10px 15px;
     cursor: pointer;
     border-radius: 4px;
-    margin: 2px 4px;
+    margin: 2px 10px;
 }
-
 .nav-container li.nav-item:hover {
     background-color: #333;
 }
-
 .nav-container li.nav-item.active {
     background-color: #444;
 }
 
 .nav-container li.nav-item a {
-    padding: 10px 15px;
     text-decoration: none;
     color: #e0e0e0;
     display: block;
-}
-
-.nav-container .nav-item button {
-    padding: 5px 5px;
+    padding: 10px;
 }
 
 .chat-history {

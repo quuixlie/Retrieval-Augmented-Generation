@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('toggleNav');
     const navBar = document.getElementById('navBar');
     const body = document.body;
@@ -10,21 +10,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const buttonNextSibling = navBar.nextSibling; // Element after navBar (or null)
 
     // --- Configuration ---
-    const sidebarWidth = 250; // MUST MATCH .nav-container width in CSS
+    const sidebarWidth = 300; // MUST MATCH .nav-container width in CSS
     const closedPosition = '10px'; // MUST MATCH .toggle-btn left in CSS (closed state)
     const openPosition = `${sidebarWidth + 10}px`; // Position next to open sidebar
-    // --- End Configuration ---
+
 
     const savedState = localStorage.getItem('sidebarState');
 
-    // Function to move button OUTSIDE nav
     function moveButtonOutside() {
         // Insert the button back into its original spot outside the nav
         // Checks if there was an element after navBar to insert before, otherwise appends
         if (buttonNextSibling) {
-            buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
+             buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
         } else {
-            buttonOriginalContainer.appendChild(newChatButton);
+             buttonOriginalContainer.appendChild(newChatButton);
         }
         newChatButton.classList.remove('state-open');
         newChatButton.classList.add('state-closed');
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // newChatButton.textContent = 'New Chat'; // Change text when inside (optional)
     }
 
-    // Main function to control sidebar state
+
     function setSidebarState(isOpen) {
         if (isOpen) {
             navBar.classList.add('visible');
@@ -66,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setSidebarState(false);
     }
 
-    toggleBtn.addEventListener('click', function () {
+    toggleBtn.addEventListener('click', function() {
         const isCurrentlyOpen = navBar.classList.contains('visible');
         setSidebarState(!isCurrentlyOpen); // Toggle the state
     });

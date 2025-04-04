@@ -3,50 +3,45 @@ Map of navigation items -> its "route" within webapp blueprint
 Requires the styles.css file
 #}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/navBar.css') }}"/> {% endblock %}
+<link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/navBar.css') }}"/> {% endblock %}
 {% block scripts %}
-    <script src="{{ url_for('webapp.static', filename='scripts/navbarHandler.js') }}"></script>{% endblock %}
+    <script src="{{ url_for('webapp.static', filename='scripts/navbarHandler.js') }}"></script>
+{% endblock %}
 {% set navTabs = [{"name":"Settings","route":"cfg.index"}] %}
 
-<button id="toggleNav" class="toggle-btn">‹</button>
+<button id="toggleNav" class="btn toggle-btn">‹</button>
 
 <nav id="navBar" class="nav-container">
 
-    <ul id="topButtonContainer">
-
-        <li>
-            <a href="{{ url_for("webapp.chat.new") }}">
-                <div id="newChatButtonPlaceholder">
-                </div>
-            </a>
-        </li>
-        <!--        <button id="searchButton" class="search-btn">S</button>-->
-    </ul>
-
+    <div id="sidebarButtonsContainer">
+        <div id="newChatButtonPlaceholder"></div>
+        <button id="newChatButton" onclick="window.location.href='{{ url_for('webapp.chat.new') }}'"
+                class="btn new-chat-btn">+
+        </button>
+    </div>
     <ul>
         {% for tab in navTabs %}
-            <li class="nav-item {{ "active" if request.endpoint == ('webapp.' + tab['route']) else "" }}">
-                <a href="{{ url_for("webapp." + tab['route']) }}">
-                    <div>{{ tab["name"] }}</div>
-                </a>
-            </li>
+        <li class="nav-item {{ 'active' if request.endpoint == ('webapp.' + tab['route']) else '' }}">
+            <a href="{{ url_for('webapp.' + tab['route']) }}">
+                <div>{{ tab["name"] }}</div>
+            </a>
+        </li>
         {% endfor %}
     </ul>
-
-    {# --- Existing Chat History --- #}
     <div class="chat-history">
         <ul id="chatList">
             {% for conv in conversations %}
-                <li class="flex-row nav-item {{ "active" if request.endpoint == 'webapp.chat.index' and  conversation_id == conv.id else "" }}">
-                    {# Make sure this link goes somewhere, e.g., /chat/{{ chat.id }} #}
-                    <a class="flex-1"
-                       href="{{ url_for("webapp.chat.index",conversation_id=conv.id) }}">{{ conv.title }}</a>
-                    <button class="btn-icon" data-conversation-id="{{ conv.id }}" onclick="toggleMenu(event)">
-                        <img src="{{ url_for('webapp.static',filename="icons/view_more.svg") }}"
-                             aria-label="Expand submenu"
-                             alt="" width="16" height="16">
-                    </button>
-                </li>
+            <li class="flex-row nav-item {{ " active
+            " if request.endpoint == 'webapp.chat.index' and conversation_id == conv.id else "" }}">
+            {# Make sure this link goes somewhere, e.g., /chat/{{ chat.id }} #}
+            <a class="flex-1"
+               href="{{ url_for('webapp.chat.index',conversation_id=conv.id) }}">{{ conv.title }}</a>
+            <button class="btn-icon" data-conversation-id="{{ conv.id }}" onclick="toggleMenu(event)">
+                <img src="{{ url_for('webapp.static',filename='icons/view_more.svg') }}"
+                     aria-label="Expand submenu"
+                     alt="" width="16" height="16">
+            </button>
+            </li>
             {% endfor %}
         </ul>
     </div>
@@ -63,4 +58,3 @@ Requires the styles.css file
         </button>
     </div>
 </nav>
-<button id="newChatButton" class="new-chat-btn">+</button>

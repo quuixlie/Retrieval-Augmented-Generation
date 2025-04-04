@@ -61,7 +61,8 @@
 
     width: 100%;
 
-    border-radius: 8px;
+    border-radius: 16px;
+    padding: 1vh 1vw;
 
     box-shadow: 0 -0.2vh 1vw rgba(0, 0, 0, 0.3);
     background-color: #1f1f1f;

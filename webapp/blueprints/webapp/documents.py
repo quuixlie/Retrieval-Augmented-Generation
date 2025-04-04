@@ -19,9 +19,6 @@ documents_bp = Blueprint("documents", __name__)
 
 @documents_bp.route('/upload/<int:conversation_id>', methods=["POST"])
 def upload(conversation_id: int):
-
-    time.sleep(10)
-
     if not ConversationModel.exists(conversation_id):
         return jsonify({"error": "Conversation does not exist"})
 

@@ -94,6 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
+
+    scrollToBottom()
+
     let textarea = messageInput.querySelector('textarea');
     textarea.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {

@@ -1,5 +1,3 @@
-import time
-
 import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
@@ -8,7 +6,6 @@ from config import Config
 from .models import ChatMessageModel, ConversationModel, DocumentModel
 
 chat_bp = Blueprint("chat", __name__)
-
 
 @chat_bp.route('/<int:conversation_id>', methods=["GET"])
 def index(conversation_id: int):
