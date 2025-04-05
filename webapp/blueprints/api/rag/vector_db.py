@@ -1,4 +1,5 @@
 from pymilvus import MilvusClient, DataType, CollectionSchema, Collection, connections
+from pymilvus.model.reranker import BGERerankFunction
 
 
 class VectorDB:
@@ -69,6 +70,24 @@ class VectorDB:
         }
 
         results = self.client.search(collection_name, anns_field = "embedding", data = query_embedding, search_params = search_params,
-                                     limit = 1, output_fields = ["text"])
+                                     limit = 11, output_fields = ["text"])
 
         return results
+
+
+    def rerank(self, results: list, query: str, top_k: int = 4):
+        """
+        Rerank the results based on the query embedding.
+        """
+        # Rerank the results based on the query embedding
+        reranker = BGERerankFunction(model_name = "BAAI/bge-reranker-v2-m3", device="cpu")
+        initial_docs = [result['entity']['text'] for result in results[0]]
+        reranked_results = reranker(query, initial_docs)
+
+        output = []
+        for i in range(top_k):
+            output.append(reranked_results[i].text)
+
+        output = "\n".join(output)
+
+        return output
