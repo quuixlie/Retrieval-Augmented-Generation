@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, json
+from .rag import rag_input
 
 api_bp = Blueprint("api", __name__)
 
@@ -12,15 +13,16 @@ def index(conversation_id: int):
 
     query = request.json.get("query", None)
     config = request.json.get("config", None)
-    print(query)
-    print(config)
+    print("Query: ", query)
+    print("Query config:", config)
 
     if not query:
         return jsonify({"error": "Query not provided"}), 400
 
-    # TODO :: RAG
+    # Process the query
+    result = rag_input.process_query(conversation_id, query)
 
-    return jsonify({"message": "Message from rag"}), 200
+    return jsonify({"message": f"{result}"}), 200
 
 
 #
@@ -38,15 +40,13 @@ def upload_documents(conversation_id: int):
     if config:
         config = json.loads(config.read())
 
-    print(request.files)
-    print(files)
-    print(config)
+    print("Upload files: ", files)
+    print("Upload files config: ", config)
 
     if not files:
         return jsonify({"error": "No files provided"}), 400
 
     for file in files:
-        # Todo :: Process files
-        pass
+        rag_input.process_document(conversation_id, file)
 
     return jsonify({"message": "Files uploaded"}), 200

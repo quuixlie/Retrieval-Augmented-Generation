@@ -1,5 +1,15 @@
 ## Running the app
 
+### New way (in webapp directory)
+```
+sudo docker build -t rag-service .
+sudo docker run --rm rag-service
+```
+
+---
+## Running the app
+### Old way
+
 First install all the required packages using:
 
 ```
