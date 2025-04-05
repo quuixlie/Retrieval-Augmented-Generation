@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, json
 
 api_bp = Blueprint("api", __name__)
 
@@ -10,7 +10,10 @@ def index(conversation_id: int):
     :return: JSON with RAG response at key "message" or error at key "error"
     """
 
-    query = request.form.get("query", None)
+    query = request.json.get("query", None)
+    config = request.json.get("config", None)
+    print(query)
+    print(config)
 
     if not query:
         return jsonify({"error": "Query not provided"}), 400
@@ -30,6 +33,14 @@ def upload_documents(conversation_id: int):
     """
 
     files = request.files.getlist("files")
+    config = request.files.get("config", None)
+
+    if config:
+        config = json.loads(config.read())
+
+    print(request.files)
+    print(files)
+    print(config)
 
     if not files:
         return jsonify({"error": "No files provided"}), 400

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.getElementById('toggleNav');
     const navBar = document.getElementById('navBar');
     const body = document.body;
@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Insert the button back into its original spot outside the nav
         // Checks if there was an element after navBar to insert before, otherwise appends
         if (buttonNextSibling) {
-             buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
+            buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
         } else {
-             buttonOriginalContainer.appendChild(newChatButton);
+            buttonOriginalContainer.appendChild(newChatButton);
         }
         newChatButton.classList.remove('state-open');
         newChatButton.classList.add('state-closed');
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setSidebarState(false);
     }
 
-    toggleBtn.addEventListener('click', function() {
+    toggleBtn.addEventListener('click', function () {
         const isCurrentlyOpen = navBar.classList.contains('visible');
         setSidebarState(!isCurrentlyOpen); // Toggle the state
     });
@@ -80,6 +80,7 @@ let selectedConversationId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     contextMenu = document.getElementById("conversationContextMenu")
+    document.getElementById('navBar').addEventListener("click", hideMenu);
 })
 
 function showMenu(x, y) {

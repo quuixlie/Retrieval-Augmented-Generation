@@ -1,0 +1,78 @@
+
+.config-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    width: 60%;
+    height: 100vh;
+
+    align-self: center;
+
+    padding: 3vh 0 3vh;
+}
+
+
+#creationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+
+    width: 100%;
+
+    overflow-y: auto;
+    scroll-behavior: smooth;
+
+    padding-right: 5px;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+.config-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+
+    overflow-y: auto;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+
+}
+
+.config-item {
+    width: 100%;
+    padding: 10px;
+
+    border-radius: 10px;
+    background-color: #2a2a2a;
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    color: #e0e0e0;
+}
+
+.config-item span {
+    text-overflow: ellipsis;
+}
+
+.config-item:hover .config-details {
+    max-height: 300px;
+}
+
+.config-details {
+    max-height: 0;
+    overflow: hidden;
+
+    transition: max-height 0.3s ease;
+
+}
+
+.config-details p {
+    margin-bottom: 10px;
+}
+
+.config-details p:first-child {
+    margin-top: 10px;
+}
+
+
+

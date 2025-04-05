@@ -2,10 +2,11 @@ import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
 from app import db
-from config import Config
-from .models import ChatMessageModel, ConversationModel, DocumentModel
+from appconfig import AppConfig
+from .models import ChatMessageModel, ConversationModel, DocumentModel, ConfigModel
 
 chat_bp = Blueprint("chat", __name__)
+
 
 @chat_bp.route('/<int:conversation_id>', methods=["GET"])
 def index(conversation_id: int):
@@ -24,7 +25,17 @@ def index(conversation_id: int):
 
 @chat_bp.route('/new', methods=['GET'])
 def new():
-    new_conversation = ConversationModel(title="Conversation")
+    """Optional config """
+    config_id = request.args.get("config_id", type=int)
+
+    if config_id and not ConfigModel.exists(config_id):
+        config_id = None
+
+    # Default config
+    if not config_id:
+        config_id = ConfigModel.get_default().id
+
+    new_conversation = ConversationModel(title="Conversation", active_config_id=config_id)
     db.session.add(new_conversation)
     db.session.commit()
 
@@ -54,7 +65,9 @@ def delete(id: int):
 
 @chat_bp.route('/send/<int:conversation_id>', methods=["POST"])
 def send(conversation_id: int):
-    if not ConversationModel.exists(conversation_id):
+    conversation = ConversationModel.query.filter(ConversationModel.id == conversation_id).first()
+
+    if not conversation:
         return jsonify({"error": "Invalid conversation"}), 400
 
     message = request.form.get("message", None)
@@ -62,24 +75,23 @@ def send(conversation_id: int):
     if not message:
         return jsonify({"error": "Message not provided"}), 400
 
-    url = Config.API_BASE_URL + url_for("api.index", conversation_id=conversation_id)
+    url = AppConfig.API_BASE_URL + url_for("api.index", conversation_id=conversation_id)
 
-    response = requests.post(url, data={"query": message})
+    config_dict = conversation.active_config.get_values_dict()
+
+    response = requests.post(url, json={"query": message, "config": config_dict})
 
     try:
         responseJSON = response.json()
 
         if responseJSON.get("error", None):
-            return jsonify({"error": responseJSON.get("error")})
+            return jsonify({"error": responseJSON.get("error")}), 400
 
         response_message = responseJSON.get("message", None)
-
         # Saving to the db
         new_message = ChatMessageModel(conversation_id=conversation_id, message=message, response=response_message)
         db.session.add(new_message)
         db.session.commit()
-
-        print(response_message)
 
         return jsonify({"rag_response": response_message})
 

@@ -126,6 +126,13 @@ body.sidebar-open {
     padding: 10px;
 }
 
+.nav-container li.nav-item .btn-icon {
+    opacity:0;
+}
+.nav-container li.nav-item:hover .btn-icon {
+    opacity:1;
+}
+
 .chat-history {
     margin-top: 20px;
     flex-grow: 1;
