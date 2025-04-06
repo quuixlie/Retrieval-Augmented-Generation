@@ -5,20 +5,24 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Tworzenie użytkownika i grupy
-ARG UID=1000
-ARG GID=1000
-RUN set -x && \
-    groupadd -g "${GID}" python && \
-    useradd --create-home --no-log-init -u "${UID}" -g "${GID}" python &&\
-    chown python:python -R /app
+#ARG UID=1000
+#ARG GID=1000
+#RUN set -x && \
+#    groupadd -g "${GID}" python && \
+#    useradd --create-home --no-log-init -u "${UID}" -g "${GID}" python
 
-USER python
+#USER python
 
-# Kopiowanie pliku requirements.txt i instalacja zależności
+# Instalacja torcha z cpu
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Pobieranie modeli
+RUN pip install FlagEmbedding sentence-transformers
+RUN python -c "from FlagEmbedding import BGEM3FlagModel; model = BGEM3FlagModel('BAAI/bge-reranker-v2-m3')"
+RUN python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L12-v2')"
+
+# Instalacja zależności aplikacji
 COPY requirements.txt /app/
-
-# Instalacja zależności
-RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiowanie reszty aplikacji do obrazu
