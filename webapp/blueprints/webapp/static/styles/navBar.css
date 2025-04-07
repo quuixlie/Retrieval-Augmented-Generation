@@ -2,6 +2,7 @@ body {
     padding-left: 0;
     transition: padding-left 0.3s ease-in-out;
 }
+
 body.sidebar-open {
     padding-left: 270px;
 }
@@ -90,7 +91,11 @@ body.sidebar-open {
 }
 
 .new-chat-btn.state-open:hover {
-     background-color: #333;
+    background-color: #333;
+}
+
+.new-chat-btn.state-open:hover {
+    background-color: #333;
 }
 
 .nav-container ul {
@@ -118,13 +123,57 @@ body.sidebar-open {
     text-decoration: none;
     color: #e0e0e0;
     display: block;
+    padding: 10px;
+}
+
+.nav-container li.nav-item .btn-icon {
+    opacity:0;
+}
+.nav-container li.nav-item:hover .btn-icon {
+    opacity:1;
 }
 
 .chat-history {
     margin-top: 20px;
     flex-grow: 1;
     overflow-y: auto;
-    padding: 0 10px;
     border-top: 1px solid #333;
-    padding-top: 10px;
+    padding: 10px 10px 0;
+}
+
+.conversation-context-menu {
+    display: none;
+    position: absolute;
+
+    z-index: 100;
+    padding: 5px;
+
+    border-color: #333;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    background-color: #464545;
+
+}
+
+.conversation-context-entry {
+    display: flex;
+    align-items:center;
+
+    gap:8px;
+    padding: 5px;
+
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.conversation-context-entry:hover {
+    background-color: #555;
+}
+
+.conversation-context-entry span {
+    color: #eee;
 }

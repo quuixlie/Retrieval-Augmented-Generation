@@ -35,23 +35,7 @@
         </div>
     </div>
 
-    <div class="file-list-container">
-        <button class="file-list-button">Attached documents</button>
-        <div class="file-list">
-            {% if attached_documents | length > 0 %}
-                {% for file in attached_documents %}
-                    <div class="file">
-                        <img src="{{ url_for("webapp.static",filename="icons/file.svg") }}" width="32" height="32"
-                             alt=""/>
-                        <span>{{ file.name }}</span>
-                    </div>
-                {% endfor %}
-            {% else %}
-                No files attached
-            {% endif %}
-        </div>
-    </div>
-
+    {% include 'chat_file_list.html' %}
 
     <script src="{{ url_for('webapp.static', filename='scripts/chatHandler.js') }}"></script>
 {% endblock %}

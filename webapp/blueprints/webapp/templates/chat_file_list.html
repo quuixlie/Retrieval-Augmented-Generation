@@ -1,0 +1,23 @@
+{# Requires
+    chat.css
+    attached_documents should be a list of DocumentModel
+#}
+
+<div class="file-list-container">
+    <button class="file-list-button">Attached documents</button>
+    <div class="file-list">
+        {% if attached_documents | length > 0 %}
+            {% for file in attached_documents %}
+                <div class="file">
+                    <img src="{{ url_for("webapp.static",filename="icons/file.svg") }}" width="32" height="32"
+                         alt=""/>
+                    <span>{{ file.name }}</span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="file">
+                No files attached
+            </div>
+        {% endif %}
+    </div>
+</div>

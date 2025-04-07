@@ -1,4 +1,8 @@
-from flask import Blueprint, jsonify, request
+import asyncio
+
+from flask import Blueprint, jsonify, request, json
+from .rag import rag_input
+from ..webapp.llm_handler import llm
 
 api_bp = Blueprint("api", __name__)
 
@@ -10,14 +14,27 @@ def index(conversation_id: int):
     :return: JSON with RAG response at key "message" or error at key "error"
     """
 
-    query = request.form.get("query", None)
+    query = request.json.get("query", None)
+    config = request.json.get("config", None)
+    print("Query: ", query)
+    print("Query config:", config)
+
+    # {'model_id': 'meta-llama/llama-4-maverick:free', 'model_name': 'Meta: Llama 4 Maverick (free)', 'chunk_size': 100, 'document_count': 5}
 
     if not query:
         return jsonify({"error": "Query not provided"}), 400
 
-    # TODO :: RAG
+    if not config:
+        return jsonify({"error": "Config not provided"}), 400
 
-    return jsonify({"message": "Message from rag"}), 200
+    model_endpoint = config['model_id']
+
+    data = llm(model_endpoint, query)
+
+    # Process the query
+    # result = rag_input.process_query(conversation_id, query)
+
+    return jsonify({"message": f"{data}"}), 200
 
 
 #
@@ -30,13 +47,18 @@ def upload_documents(conversation_id: int):
     """
 
     files = request.files.getlist("files")
+    config = request.files.get("config", None)
+
+    if config:
+        config = json.loads(config.read())
+
+    print("Upload files: ", files)
+    print("Upload files config: ", config)
 
     if not files:
         return jsonify({"error": "No files provided"}), 400
 
     for file in files:
-        # print(file)
-        # Todo :: Process files
-        pass
+        rag_input.process_document(conversation_id, file)
 
     return jsonify({"message": "Files uploaded"}), 200

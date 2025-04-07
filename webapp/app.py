@@ -19,9 +19,9 @@ def create_app() -> Flask:
     app = Flask(__name__)
 
     # Loading configuration
-    from config import Config
-    Config.initialize()
-    app.config.from_object(Config)
+    from appconfig import AppConfig
+    AppConfig.initialize()
+    app.config.from_object(AppConfig)
 
     # Loading flask submodules
     db.init_app(app)
@@ -35,7 +35,7 @@ def create_app() -> Flask:
     app.register_blueprint(api_bp, url_prefix="/api")
 
     # Ensuring the database exists
-    Config.create_db(app, db)
+    AppConfig.create_db(app, db)
 
     # Registering callbacks
     @app.errorhandler(404)

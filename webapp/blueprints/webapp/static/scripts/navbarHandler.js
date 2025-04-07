@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.getElementById('toggleNav');
     const navBar = document.getElementById('navBar');
     const body = document.body;
@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Insert the button back into its original spot outside the nav
         // Checks if there was an element after navBar to insert before, otherwise appends
         if (buttonNextSibling) {
-             buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
+            buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
         } else {
-             buttonOriginalContainer.appendChild(newChatButton);
+            buttonOriginalContainer.appendChild(newChatButton);
         }
         newChatButton.classList.remove('state-open');
         newChatButton.classList.add('state-closed');
@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Set initial state on load
     if (savedState === 'open') {
         moveButtonInside();
         setSidebarState(true);
@@ -64,18 +65,22 @@ document.addEventListener('DOMContentLoaded', function() {
         setSidebarState(false);
     }
 
-    toggleBtn.addEventListener('click', function() {
+    toggleBtn.addEventListener('click', function () {
         const isCurrentlyOpen = navBar.classList.contains('visible');
         setSidebarState(!isCurrentlyOpen); // Toggle the state
     });
 });
+
+
 // Context menu
 
 let contextMenu = null;
-let activeConversationID = null;
+let selectedButton = null;
+let selectedConversationId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     contextMenu = document.getElementById("conversationContextMenu")
+    document.getElementById('navBar').addEventListener("click", hideMenu);
 })
 
 function showMenu(x, y) {
@@ -83,34 +88,63 @@ function showMenu(x, y) {
         contextMenu.style.display = "block";
         contextMenu.style.top = `${y}px`;
         contextMenu.style.left = `${x}px`;
+    } else {
+        console.error("Context menu not found");
     }
 }
 
 function hideMenu() {
     if (contextMenu) {
         contextMenu.style.display = "none";
+    } else {
+        console.error("Context menu not found");
     }
+    selectedButton = null;
+    selectedConversationId = null;
 }
 
 function toggleMenu(event) {
     event.stopPropagation()
 
+    selectedButton = event.target.closest("button");
+    const rect = selectedButton.getBoundingClientRect();
 
-    const activeButton = event.target.closest("button");
-    const rect = activeButton.getBoundingClientRect();
+    console.log(selectedButton)
 
-    console.log(activeButton)
-
-    activeConversationID = activeButton.getAttribute("data-conversation-id")
-
+    selectedConversationId = selectedButton.getAttribute("data-conversation-id")
 
     showMenu(rect.x, rect.y);
 }
 
-function deleteConversation() {
-    if (activeConversationID) {
-        console.log(`Deleting conversation ${activeConversationID}`);
+function deleteConversation(deleteURL, current_conv_id, redirectURL) {
+    if (!selectedConversationId) {
+        console.error("No active conversation ID")
+        return
     }
-    hideMenu()
+    const listentry = selectedButton.closest('li');
+
+    const url = `${deleteURL.slice(0, deleteURL.lastIndexOf("/"))}/${selectedConversationId}`
+    console.log(url)
+
+    fetch(url, {
+        method: "DELETE",
+    }).then((response) => {
+        if (response.ok) {
+            listentry.remove()
+
+            if (current_conv_id == selectedConversationId) {
+                window.location.replace(redirectURL)
+            }
+
+            hideMenu()
+            console.log("Conversation deleted successfully")
+
+        } else {
+            console.error("Error deleting conversation")
+        }
+    }).catch((error) => {
+        console.error("Error deleting conversation", error)
+    });
+
 }
 
