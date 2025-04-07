@@ -52,6 +52,9 @@ class AppConfig:
             pattern = "^.*:free$"
 
             models = [model for model in models if re.match(pattern, model["id"])]
+            models.append({'id': 'localhost',
+                           'name': '#to_wcale_nie_jest_koparka_btc_to_tylko_rag_okok',
+                            'description': '#to_wcale_nie_jest_koparka_btc_to_tylko_rag_okok'})
             models.sort(key=lambda x: x["name"])
             AppConfig.AVAILABLE_MODELS = models
 
@@ -60,7 +63,7 @@ class AppConfig:
             previous_encoding = sys.stdout.encoding
             sys.stdout.reconfigure(encoding="utf-8")
 
-            print("Received models:", models)
+            # print("Received models:", models)
 
             sys.stdout.reconfigure(encoding=previous_encoding)
 

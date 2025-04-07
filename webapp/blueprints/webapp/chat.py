@@ -35,7 +35,8 @@ def new():
     if not config_id:
         config_id = ConfigModel.get_default().id
 
-    new_conversation = ConversationModel(title="Conversation", active_config_id=config_id)
+    config_name = ConfigModel.query.get(config_id).name
+    new_conversation = ConversationModel(title=f"Conversation with {config_name}", active_config_id=config_id)
     db.session.add(new_conversation)
     db.session.commit()
 

@@ -28,8 +28,11 @@ def index(conversation_id: int):
         return jsonify({"error": "Config not provided"}), 400
 
     model_endpoint = config['model_id']
-
-    data = llm(model_endpoint, query)
+    data = ''
+    if model_endpoint == 'localhost':
+        data = rag_input.process_query(conversation_id, query)
+    else:
+        data = llm(model_endpoint, query)
 
     # Process the query
     # result = rag_input.process_query(conversation_id, query)
