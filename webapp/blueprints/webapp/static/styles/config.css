@@ -45,13 +45,19 @@
     border-radius: 10px;
     background-color: #2a2a2a;
 
+
+    overflow: hidden;
+
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 
     color: #e0e0e0;
+
 }
 
 .config-item span {
+    overflow: hidden;
     text-overflow: ellipsis;
+    flex:1;
 }
 
 .config-item:hover .config-details {

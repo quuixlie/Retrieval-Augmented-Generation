@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Uploading files
 
     function refreshFileList(newHTML) {
-        const fileList = document.querySelector('div.file-list-container')
+        const fileList = document.getElementById("documentList")
         const template = document.createElement('template');
         template.innerHTML = newHTML.trim();
         const newFileList = template.content.firstChild;

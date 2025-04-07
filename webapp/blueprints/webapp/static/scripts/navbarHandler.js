@@ -1,74 +1,51 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const toggleBtn = document.getElementById('toggleNav');
-    const navBar = document.getElementById('navBar');
-    const body = document.body;
+    const toggleNavCheckbox = document.getElementById('toggleNav');
     const newChatButton = document.getElementById('newChatButton');
-    const placeholder = document.getElementById('newChatButtonPlaceholder');
-    // Store the original container where the button sits when closed
-    // This assumes the button is placed directly after navBar in the HTML body/container
-    const buttonOriginalContainer = navBar.parentNode;
-    const buttonNextSibling = navBar.nextSibling; // Element after navBar (or null)
 
-    // --- Configuration ---
-    const sidebarWidth = 300; // MUST MATCH .nav-container width in CSS
-    const closedPosition = '10px'; // MUST MATCH .toggle-btn left in CSS (closed state)
-    const openPosition = `${sidebarWidth + 10}px`; // Position next to open sidebar
-
+    const insideButtonsContainer = document.getElementById('insideButtonsContainer');
+    const outsideButtonsContainer = document.getElementById('outsideButtonsContainer');
 
     const savedState = localStorage.getItem('sidebarState');
 
     function moveButtonOutside() {
-        // Insert the button back into its original spot outside the nav
-        // Checks if there was an element after navBar to insert before, otherwise appends
-        if (buttonNextSibling) {
-            buttonOriginalContainer.insertBefore(newChatButton, buttonNextSibling);
-        } else {
-            buttonOriginalContainer.appendChild(newChatButton);
-        }
-        newChatButton.classList.remove('state-open');
-        newChatButton.classList.add('state-closed');
-        newChatButton.textContent = '+'; // Ensure correct text/icon
+        newChatButton.remove()
+        outsideButtonsContainer.appendChild(newChatButton);
     }
 
     function moveButtonInside() {
-        placeholder.appendChild(newChatButton); // Move button into placeholder
-        newChatButton.classList.remove('state-closed');
-        newChatButton.classList.add('state-open');
-        // newChatButton.textContent = 'New Chat'; // Change text when inside (optional)
+        newChatButton.remove()
+        insideButtonsContainer.appendChild(newChatButton);
     }
 
 
     function setSidebarState(isOpen) {
         if (isOpen) {
-            navBar.classList.add('visible');
-            body.classList.add('sidebar-open');
-            toggleBtn.textContent = '‹';
-            toggleBtn.style.left = openPosition;
-            moveButtonInside(); // Move button INTO sidebar
+            moveButtonInside();
             localStorage.setItem('sidebarState', 'open');
         } else {
-            navBar.classList.remove('visible');
-            body.classList.remove('sidebar-open');
-            toggleBtn.textContent = '›';
-            toggleBtn.style.left = closedPosition;
-            moveButtonOutside(); // Move button OUT of sidebar
+            moveButtonOutside();
             localStorage.setItem('sidebarState', 'closed');
         }
     }
 
-    // Set initial state on load
     if (savedState === 'open') {
-        moveButtonInside();
+        toggleNavCheckbox.checked = true;
         setSidebarState(true);
     } else {
-        moveButtonOutside();
+        toggleNavCheckbox.checked = false;
         setSidebarState(false);
     }
 
-    toggleBtn.addEventListener('click', function () {
-        const isCurrentlyOpen = navBar.classList.contains('visible');
-        setSidebarState(!isCurrentlyOpen); // Toggle the state
+    toggleNavCheckbox.addEventListener('change', function () {
+        const isOpen = toggleNavCheckbox.checked;
+        setSidebarState(isOpen);
     });
+    newChatButton.addEventListener('click', function (e) {
+        e.preventDefault()
+        const link = e.target.href;
+        setSidebarState(true)
+        window.location.href = link;
+    })
 });
 
 
@@ -80,7 +57,8 @@ let selectedConversationId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     contextMenu = document.getElementById("conversationContextMenu")
-    document.getElementById('navBar').addEventListener("click", hideMenu);
+    // Hiding menu when user clicks somewhere
+    document.addEventListener("click", hideMenu);
 })
 
 function showMenu(x, y) {

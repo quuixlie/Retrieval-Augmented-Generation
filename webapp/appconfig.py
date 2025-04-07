@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 
 import requests
@@ -28,42 +29,39 @@ class AppConfig:
         """
         Initializes the configuration
         """
+        print("Initializing AppConfig")
 
-        AppConfig.SECRET_KEY = AppConfig.__read_secret_key()
+        AppConfig.__read_secret_key()
         AppConfig.__create_upload_directory()
         AppConfig.__set_available_models()
+
+        print("Initialized AppConfig")
 
     @staticmethod
     def __set_available_models():
         """
         Sets the available models
         """
-
         # Getting only the free models
 
         response = requests.get("https://openrouter.ai/api/v1/models")
 
         if not response.ok:
-            print("Failed to fetch available models from openrouter")
+            print("Couldn't fetch available models from openrouter")
             return
-
         try:
             models = response.json()["data"]
             pattern = "^.*:free$"
 
             models = [model for model in models if re.match(pattern, model["id"])]
-
             AppConfig.AVAILABLE_MODELS = models
 
             # print doesn't work with utf-8 encoded data on windows (default encoding is cp1250)
             import sys
             previous_encoding = sys.stdout.encoding
             sys.stdout.reconfigure(encoding="utf-8")
-
-            print("Received models:", models)
-
+            print(f"Received {len(models)} models from openrouter")
             sys.stdout.reconfigure(encoding=previous_encoding)
-
 
         except Exception as e:
             print(f"Error occurred while fetching models: {e}")
@@ -74,18 +72,24 @@ class AppConfig:
         """
         Creates the upload directory if it doesn't exist
         """
+        print("Creating upload directory")
         if not os.path.exists(AppConfig.UPLOAD_DIRECTORY):
+            print("Upload directory created")
             os.makedirs(AppConfig.UPLOAD_DIRECTORY)
+        else:
+            print("Upload directory already exists no need to create it")
 
     @staticmethod
     def __read_secret_key() -> str:
         """
         Reads the secret key from the file
         """
+        print("Reading secret key")
         try:
             with open("instance/secret_key", "r") as file:
-                return file.read().strip()
+                AppConfig.SECRET_KEY = file.read().strip()
         except OSError:
+            print("Secret key file not found - creating new one")
             # Secret file doesn't exist
             if not os.path.exists("instance"):
                 os.makedirs("instance")
@@ -93,10 +97,14 @@ class AppConfig:
             with open("instance/secret_key", "w") as file:
                 secret_key = str(os.urandom(32))
                 file.write(secret_key)
-                return secret_key
+                AppConfig.SECRET_KEY = secret_key
+
+        print("Secret key loaded")
 
     @staticmethod
     def __create_default_config_entity(app: Flask, db: SQLAlchemy):
+
+        print("Creating default configuration")
         # Create default config
         from blueprints.webapp.models import ConfigModel
         with app.app_context():
@@ -107,6 +115,7 @@ class AppConfig:
 
             db.session.add(default_config)
             db.session.commit()
+            print("Default configuration created: ", default_config.get_values_dict())
 
     @staticmethod
     def create_db(app: Flask, db: SQLAlchemy):
@@ -118,21 +127,20 @@ class AppConfig:
         if not os.path.exists("instance"):
             os.makedirs("instance")
 
-        if not os.path.exists("instance/db_instance.db"):
-            print("Database instance doesn't exist - Creating new one")
-            with app.app_context():
-                db.create_all()
-                print(db.metadata.tables.keys())
-            print("Database successfully created")
-
-        # Ensuring default config is in the db
         with app.app_context():
+            # db.drop_all()
+            db.create_all()
+            print(db.metadata.tables.keys())
+
+            print("Database successfully created")
+            # Ensuring default config is in the db
             from blueprints.webapp.models import ConfigModel
             try:
                 ConfigModel.get_default()
-            except Exception as e:
-                print(e)
-                print("Default config not found - creating new one")
-
+            except ValueError as e:
+                print("Default config not found in the database - creating new one")
                 # Create default config
                 AppConfig.__create_default_config_entity(app, db)
+
+            except Exception as e:
+                print("TERMINAL ERROR:: Couldn't create default configuration", e)

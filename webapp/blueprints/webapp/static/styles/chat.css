@@ -57,36 +57,37 @@
 .chat-input-container {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: stretch;
 
     width: 100%;
 
-    border-radius: 16px;
-    padding: 1vh 1vw;
+    border-radius: 20px;
+    padding: 12px 20px;
 
     box-shadow: 0 -0.2vh 1vw rgba(0, 0, 0, 0.3);
     background-color: #1f1f1f;
+
+    gap: 12px;
 }
+
 
 .chat-input-area {
     display: flex;
-
-    justify-content: center;
+    flex-direction: row;
+    align-items: stretch;
 
     flex: 1;
-    gap: 1.2vh;
+    gap: 12px;
 }
 
 .chat-input-area textarea {
     flex: 1;
-    padding: 1.2vh 1.6vw;
-    border: 0.1vw solid #333;
+    padding: 12px;
+    border: 1px solid #333;
     border-radius: 0.8vh;
     background-color: #2a2a2a;
     color: #e0e0e0;
     resize: none;
-    min-height: 2vh;
-    max-height: 12vh;
     font-family: inherit;
     outline: none;
     transition: border-color 0.2s;
@@ -97,7 +98,7 @@
 }
 
 .chat-input-area button {
-    padding: 1.2vh 2vw;
+    padding: 10px 20px 10px 20px;
     border: none;
     border-radius: 0.8vh;
     background-color: #5a2a2a;
@@ -111,89 +112,96 @@
     background-color: #6a3a3a;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-    width: 0.8vw;
+
+.chat-document {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    cursor: default;
+    gap: 10px;
 }
 
-::-webkit-scrollbar-track {
-    background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 0.4vw;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #444;
-}
-
-
-.file-list-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-
-    border-radius: 8px;
-    padding: 1vh;
-
-}
-
-
-.file-list-button {
-    border: none;
-    padding: 12px;
-    background: #2a2a2a;
-    color: white;
-
-    width: min-content;
-
-    float: right;
-
-    border-radius: 8px;
-}
-
-.file-list-container:hover .file-list-button {
-    border-radius: 8px 8px 0 0;
-
-}
-
-.file-list {
-    clear: right;
-    display: flex;
-    flex-direction: column;
-    gap: 1vh;
-
-    max-height: 0;
-
-    overflow-y: scroll;
-    scroll-behavior: smooth;
-
-    background-color: #2a2a2a;
-    border-radius: 8px;
-
-    transition: max-height 0.3s;
-}
-
-.file-list-container:hover .file-list {
-    max-height: 50vh;
-}
-
-
-.file-list .file {
+.chat-config-item {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 1vh;
 
-    max-width: 250px;
-
-    padding: 1vh;
-    border-radius: 8px;
-    background-color: #2a2a2a;
+    gap: 10px;
 }
 
-.file-list .file span {
-    word-wrap: anywhere;
+.chat-config-item span {
+
+    flex: 1;
 }
+
+
+.chat-expand-button {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.chat-expand-button > *:nth-child(2) {
+    display: inline-block;
+    max-width: 0;
+
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+
+    font-size: 1em;
+    color: #e0e0e0;
+
+    transition: max-width 0.7s ease-out;
+}
+
+.chat-expand-button:hover > *:nth-child(2) {
+    max-width: 180px;
+}
+
+
+.chat-expand-button:hover .chat-expand-btn-items {
+    max-height: 250px;
+    overflow-y: scroll;
+}
+
+.chat-expand-btn-items {
+
+    display: inline-block;
+
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    max-height: 0;
+
+    z-index: 1;
+
+    background-color: #1f1f1f;
+    border-radius: 0.8vh;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    transition: max-height 0.15s ease-in-out;
+
+}
+
+.chat-expand-btn-items > * {
+    display: block;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    width: 400px;
+}
+
+.chat-expand-btn-items * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+
+

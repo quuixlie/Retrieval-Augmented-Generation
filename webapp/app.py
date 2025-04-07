@@ -2,11 +2,28 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask import session
+import click
 
 import session_data
 from session_data import SessionData
 
 db = SQLAlchemy()
+
+
+def register_cli_arguments(app: Flask) -> None:
+    """
+    Registers CLI arguments for the application.
+    :param app: Flask application
+    """
+
+    @app.cli.command("drop-db")
+    def drop_db() -> None:
+        """
+        Drops all tables in the database.
+        """
+        with app.app_context():
+            db.drop_all()
+            print(f"Database dropped")
 
 
 def create_app() -> Flask:
@@ -18,13 +35,17 @@ def create_app() -> Flask:
 
     app = Flask(__name__)
 
+    register_cli_arguments(app)
+
     # Loading configuration
     from appconfig import AppConfig
     AppConfig.initialize()
     app.config.from_object(AppConfig)
 
     # Loading flask submodules
+    print("Initializing database connection")
     db.init_app(app)
+    print("Initializing database connection")
     migrate = Migrate(app, db)
 
     # Registering blueprints and routes
@@ -60,6 +81,7 @@ def create_app() -> Flask:
         conversations = ConversationModel.query.all()
         return dict(conversations=conversations)
 
+    print("Application initialized")
     return app
 
 

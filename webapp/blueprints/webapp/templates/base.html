@@ -11,7 +11,19 @@
 <div class="flex-row" style="height:100vh">
     {% include "side_navigation.html" %}
 
-    <main class="flex-col flex-1">
+    <main class="flex-col flex-1 relative">
+
+        {# popup for displaying error/success messages across all pages #}
+        {% if popup_msg is defined and popup_msg is not none and popup_success is defined and popup_success is not none %}
+            <div id="popup-container" class="{{ "bg-success" if popup_success else "bg-error" }}">
+                <label>
+                    x
+                    <input class="hidden" type="checkbox" id="popupClose"/>
+                </label>
+                {{ popup_msg }}
+            </div>
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </main>

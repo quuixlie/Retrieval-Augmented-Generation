@@ -1,101 +1,78 @@
-body {
-    padding-left: 0;
-    transition: padding-left 0.3s ease-in-out;
+
+.nav-wrapper {
+    display: flex;
+    flex-direction: row;
 }
 
-body.sidebar-open {
-    padding-left: 270px;
-}
 .nav-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 300px;
-    height: 100vh;
-    background-color: #1f1f1f;
-    border-right: 1px solid #333;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-    z-index: 1000;
     display: flex;
     flex-direction: column;
-    padding: 10px 0;
-    box-sizing: border-box;
+
+    width: 0;
+
+    height: 100%;
+    background-color: #1f1f1f;
+    border-right: 1px solid #333;
+    padding: 10px 0 10px 0;
+
+    transition: width 0.2s ease-out;
+
+    overflow: hidden;
 }
 
-#newChatButtonPlaceholder {
-    padding: 10px 15px 5px 15px;
-    order: -1;
-    box-sizing: border-box;
-    width: 100%;
+.nav-wrapper:has(input[type="checkbox"]:checked) .nav-container {
+    width: 300px;
+}
+
+#insideButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    padding: 12px;
+}
+
+#outsideButtonsContainer {
+    display: flex;
+    flex-direction: column;
+
+    padding: 12px;
+
+    gap: 1vh;
+
 }
 
 .nav-container.visible {
     transform: translateX(0);
 }
+
 .toggle-btn {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1010;
     background-color: #333;
     color: #eee;
     border: none;
-    padding: 5px 10px;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 18px;
-    transition: left 0.3s ease-in-out;
+
+    padding: 5px 10px;
+
 }
+
+.toggle-btn::after {
+    content: ">";
+}
+
+.toggle-btn:has(input[type="checkbox"]:checked)::after {
+    content: "<";
+}
+
 
 .new-chat-btn {
-    position: fixed;
-    top: 10px;
-    left: 40px;
-    z-index: 1005;
     background-color: #333;
     color: #eee;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 18px;
-}
-
-.new-chat-btn:hover {
-    background-color: #444;
-}
-
-.new-chat-btn.state-closed {
-    position: fixed;
-    top: 10px;
-    left: 40px;
-    z-index: 1005;
-}
-
-.new-chat-btn.state-open {
-    background-color: #1f1f1f;
-    position: relative;
-    display: block;
-    margin-left: auto;
-    margin-right: 0;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    line-height: normal;
-    text-align: left;
-    box-shadow: none;
-    height: auto;
-    top: auto;
-    left: auto;
-}
-
-.new-chat-btn.state-open:hover {
-    background-color: #333;
-}
-
-.new-chat-btn.state-open:hover {
-    background-color: #333;
 }
 
 .nav-container ul {
@@ -112,9 +89,11 @@ body.sidebar-open {
     border-radius: 4px;
     margin: 2px 10px;
 }
+
 .nav-container li.nav-item:hover {
     background-color: #333;
 }
+
 .nav-container li.nav-item.active {
     background-color: #444;
 }
@@ -127,10 +106,11 @@ body.sidebar-open {
 }
 
 .nav-container li.nav-item .btn-icon {
-    opacity:0;
+    opacity: 0;
 }
+
 .nav-container li.nav-item:hover .btn-icon {
-    opacity:1;
+    opacity: 1;
 }
 
 .chat-history {
@@ -140,6 +120,19 @@ body.sidebar-open {
     border-top: 1px solid #333;
     padding: 10px 10px 0;
 }
+
+/* Hiding the scrollbar when navbar is hidden */
+.nav-wrapper:has(input[type="checkbox"]:not(:checked)) .chat-history::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hiding the scrollbar when navbar is hidden (other browsers)*/
+.nav-wrapper:has(input[type="checkbox"]:not(:checked)) .chat-history {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    border-top: none;
+}
+
 
 .conversation-context-menu {
     display: none;
@@ -161,9 +154,9 @@ body.sidebar-open {
 
 .conversation-context-entry {
     display: flex;
-    align-items:center;
+    align-items: center;
 
-    gap:8px;
+    gap: 8px;
     padding: 5px;
 
     border-radius: 5px;

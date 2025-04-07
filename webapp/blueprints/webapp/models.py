@@ -6,26 +6,29 @@ from app import db
 class ConfigModel(db.Model):
     """
     Configuration model attached to each message in conversation
-
     """
     __tablename__ = "configurations"
 
+    """
+    Application internal fields 
+    If you add any new remember to exclude them in ConfigModel.get_values_dict()
+    """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String, nullable=False)
 
     """Default configuration is added when database is created and has id=0"""
     is_default = db.Column(db.Boolean, default=False, nullable=False)
 
+    """
+    Configuration options that will  be passed to the backend 
+    """
+
     """Openrouter model id"""
-    model_id = db.Column(db.String(64), nullable=False)
+    model_id = db.Column(db.String, nullable=False)
     """Name of the model"""
-    model_name = db.Column(db.String(64), nullable=False)
+    model_name = db.Column(db.String, nullable=False)
     chunk_size = db.Column(db.Integer, nullable=False)
     document_count = db.Column(db.Integer, nullable=False)
-    """
-    Add more configuration options here
-    And in get_default() if necessary
-    """
 
     @staticmethod
     def get_all() -> list[ConfigModel]:
@@ -34,17 +37,16 @@ class ConfigModel(db.Model):
         The default configuration is always first
         :return: List of all configurations
         """
-        return ConfigModel.query.all().sort(ConfigModel.is_default.desc())
+        return ConfigModel.query.order_by(ConfigModel.is_default.desc(), ConfigModel.id.desc()).all()
 
     @staticmethod
     def get_default() -> ConfigModel:
         """
         Returns default configuration
+        :raises ValueError: If no default configuration is found (which shouldn't happen)
         :return: Default configuration
         """
         default = ConfigModel.query.filter_by(is_default=True).first()
-
-        print("DEF: ", default)
 
         if not default:
             raise ValueError("No default configuration found in the database")
@@ -57,7 +59,7 @@ class ConfigModel(db.Model):
 
     def get_values_dict(self) -> dict[str, any]:
         """
-        Serialize to dictionary without application internal details (id, name)
+        Serialize to dictionary without application internal details (id, name,is_default)
         :return: Dictionary representation of the model
         """
         x = {c: getattr(self, c) for c in inspect(self).attrs.keys()}
@@ -76,35 +78,18 @@ def prevent_default_config_deletion(mapper, connection, target: ConfigModel):
         raise Exception("Cannot delete default configuration")
 
 
-# @event.listens_for(ConfigModel, "after_delete")
-# def set_default_config(mapper, connection, target: ConfigModel):
-#    """
-#    Ensures Conversations and chat messages do not point to deleted configuration
-#
-#    This was done because of (potential skill issue) i couldn't get ON DELETE SET DEFAULT behaviour to work
-#    """
-#
-#    connection.execute(
-#        ConversationModel.__table__.update().where(ConversationModel.active_config_id == target.id).values(
-#            active_config_id=0))
-#
-#    connection.execute(
-#        ChatMessageModel.__table__.update().where(ChatMessageModel.used_config_id == target.id).values(
-#            used_config_id=0))
-
-
 class ConversationModel(db.Model):
     __tablename__ = "conversations"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(64))
+    title = db.Column(db.String)
 
     messages = db.relationship("ChatMessageModel", cascade="all, delete-orphan")
     documents = db.relationship("DocumentModel", cascade="all, delete-orphan")
 
     """
     Current active configuration for the conversation
-    If configuration is deleted it is set to null
+    If configuration is deleted it is set back to default configuration
     """
     active_config_id = db.Column(db.Integer,
                                  db.ForeignKey("configurations.id", ondelete="SET DEFAULT", onupdate="CASCADE"),
@@ -126,19 +111,20 @@ class ChatMessageModel(db.Model):
     ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # Chat messages are associated with a
-    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id))
+    conversation_id = db.Column(db.Integer, db.ForeignKey(ConversationModel.id, ondelete="CASCADE", onupdate="CASCADE"))
 
     """User message, query"""
-    message = db.Column(db.String(2048))
+    message = db.Column(db.String)
 
     """Response from the LLM"""
-    response = db.Column(db.String(4096), nullable=True)
+    response = db.Column(db.String, nullable=True)
 
     """
     Configuration used to generate response for this message
     If configuration is deleted it is set to null
     """
-    used_config_id = db.Column(db.Integer, db.ForeignKey(ConfigModel.id))
+    used_config_id = db.Column(db.Integer, db.ForeignKey(ConfigModel.id, ondelete="SET NULL", onupdate="CASCADE"),
+                               nullable=True)
     used_config = db.relationship("ConfigModel")
 
 
