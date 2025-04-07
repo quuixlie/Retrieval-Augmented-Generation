@@ -101,6 +101,6 @@ def __get_response_from_llm(prompt: str, document: str):
         input=prompt
     )
 
-    output = f"{response.output_text}\n\n\n" + "Based on: \n" + document
+    output = f"{response.output_text}\n\n\n" + "Based on: \n\n" + document
     return output
 
