@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, json
 from .rag import rag_input
+from ..webapp.llm_handler import llm
 
 api_bp = Blueprint("api", __name__)
 
@@ -19,10 +20,20 @@ def index(conversation_id: int):
     if not query:
         return jsonify({"error": "Query not provided"}), 400
 
-    # Process the query
-    result = rag_input.process_query(conversation_id, query)
+    if not config:
+        return jsonify({"error": "Config not provided"}), 400
 
-    return jsonify({"message": f"{result}"}), 200
+    model_endpoint = config['model_id']
+    data = ''
+    if model_endpoint == 'localhost':
+        data = rag_input.process_query(conversation_id, query)
+    else:
+        data = llm(model_endpoint, query)
+
+    # Process the query
+    # result = rag_input.process_query(conversation_id, query)
+
+    return jsonify({"message": f"{data}"}), 200
 
 
 #

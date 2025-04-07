@@ -59,6 +59,7 @@ def new():
         config_id = ConfigModel.get_default().id
 
     new_conversation = ConversationModel(title="Conversation", active_config_id=config_id)
+    new_conversation.title = "Conversation " + str(new_conversation.id)
     db.session.add(new_conversation)
     db.session.commit()
 

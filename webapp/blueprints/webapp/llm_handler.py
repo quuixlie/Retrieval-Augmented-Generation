@@ -1,41 +1,48 @@
 import json
+import os
+from dotenv import load_dotenv
 from os import getenv
 
 import requests
 
-OPENROUTER_API_KEY = getenv("OPENROUTER_API_KEY")
+# OPENROUTER_API_KEY = getenv("OPENROUTER_API_KEY")
 
-models = {
-    "Gemini2.0F" : {
-        "name": "Gemini 2.0",
-        "md_name":"Gemini 2\.0",
-        "emoji" : '♊️',
-        'is_free' : True,
-        'api_key': OPENROUTER_API_KEY,
-        'endpoint': "google/gemini-2.0-flash-exp:free",
-    }
-}
-
-
-async def llm(prompt: str, initial_prompt) -> str:
-    return await get_openrouter_response(prompt, initial_prompt)
+load_dotenv()
 
 
 
-async def get_openrouter_response(prompt: str, initial_prompt:str) -> str:
+import requests
+
+def llm(endpoint: str, prompt: str):
+    api = os.getenv("OPENROUTER_API_KEY")
     headers = {
-        'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+        'Authorization': f'Bearer {api}',
         'Content-Type': 'application/json',
     }
-    json_data = json.dumps({
-    "model": models['Gemini2.0F']['endpoint'], #default model
-    "messages": [
-      {
-        "role": "user",
-        "content": prompt,
-       }
-    ]
-  })
-    response = requests.post(url="https://openrouter.ai/api/v1/chat/completions", headers=headers, data=json_data)
-    response.raise_for_status()
-    return response.json()['choices'][0]['message']['content']
+    payload = {
+        "model": endpoint,
+        "messages": [{"role": "user", "content": prompt}]
+    }
+    print(headers)
+    print(payload)
+
+    try:
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=payload
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data['choices'][0]['message']['content']
+
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return {"error": "Request to LLM API failed"}
+
+    except (KeyError, IndexError) as e:
+        print(f"Unexpected response format: {e}")
+        return {"error": "Unexpected API response"}
+
+
+

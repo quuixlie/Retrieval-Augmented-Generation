@@ -1,5 +1,4 @@
 import os
-import sys
 import re
 
 import requests
@@ -54,6 +53,10 @@ class AppConfig:
             pattern = "^.*:free$"
 
             models = [model for model in models if re.match(pattern, model["id"])]
+            models.append({'id': 'localhost',
+                           'name': '#to_wcale_nie_jest_koparka_btc_to_tylko_rag_okok',
+                           'description': '#to_wcale_nie_jest_koparka_btc_to_tylko_rag_okok'})
+            models.sort(key=lambda x: x["name"])
             AppConfig.AVAILABLE_MODELS = models
 
             # print doesn't work with utf-8 encoded data on windows (default encoding is cp1250)
@@ -80,7 +83,7 @@ class AppConfig:
             print("Upload directory already exists no need to create it")
 
     @staticmethod
-    def __read_secret_key() -> str:
+    def __read_secret_key():
         """
         Reads the secret key from the file
         """
