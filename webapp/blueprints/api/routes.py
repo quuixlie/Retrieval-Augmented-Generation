@@ -66,3 +66,20 @@ def upload_documents(conversation_id: int):
         rag.process_document(conversation_id, file)
 
     return jsonify({"message": "Files uploaded"}), 200
+
+
+@api_bp.route('/delete/<int:conversation_id>', methods=["delete"])
+def delete_collection(conversation_id: int):
+    """
+    Deletes the collection with given id
+    :param conversation_id: ID of the conversation
+    :return: JSON with error at key "error" or success message at key "message"
+    """
+
+    # TODO :: tu pisz normlanie
+    if jakis_error:
+        return jsonify({"error": "Error occurred"}), 400
+
+
+
+    return jsonify({"message": "Collection deleted"}), 200
