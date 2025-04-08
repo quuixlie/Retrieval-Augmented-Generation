@@ -68,6 +68,16 @@ class VectorDB:
             return
 
 
+    def has_collection(self, conversation_id: int) -> bool:
+        """
+        Check if a collection exists in the vector database.
+        :param conversation_id: ID of the conversation
+        :return: True if the collection exists, False otherwise
+        """
+        collection_name = self.__get_collection_name_by_id(conversation_id)
+        return self.client.has_collection(collection_name)
+
+
     def insert_data(self, conversation_id: int, data: list):
         """
         Insert data into the vector database.

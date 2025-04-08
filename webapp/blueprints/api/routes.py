@@ -23,6 +23,9 @@ def index(conversation_id: int):
     if not config:
         return jsonify({"error": "Config not provided"}), 400
 
+    if not rag.can_process_query(conversation_id):
+        return jsonify({"error": "No documents uploaded"}), 400
+
     # Get relevant documents and create prompt
     relevant_documents = rag.process_query(conversation_id, query)
     relevant_documents_formatted = format_relevant_documents(relevant_documents)

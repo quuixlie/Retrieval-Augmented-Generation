@@ -60,6 +60,12 @@ def __get_embeddings_with_texts(fragments: list):
     return embeddings
 
 
+def can_process_query(conversation_id: int):
+    if not vector_db.VectorDB().has_collection(conversation_id):
+        return False
+    return True
+
+
 def process_query(conversation_id: int, query: str) -> list:
     """
     Process the query to extract relevant information. Returns the most relevant document.
