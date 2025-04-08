@@ -9,6 +9,8 @@ class VectorDB:
             token="root:Milvus"
         )
 
+        self.reranker = BGERerankFunction(model_name="BAAI/bge-reranker-v2-m3", device="cuda")
+
     def create_collection(self, conversation_d: int, dimension: int) -> None:
         """
         Create a collection in the vector database.
@@ -110,9 +112,8 @@ class VectorDB:
         Rerank the results based on the query embedding.
         """
         # Rerank the results based on the query embedding
-        reranker = BGERerankFunction(model_name = "BAAI/bge-reranker-v2-m3", device="cpu")
         initial_docs = [result['entity']['text'] for result in results[0]]
-        reranked_results = reranker(query, initial_docs)
+        reranked_results = self.reranker(query, initial_docs)
 
         output = []
         for i in range(top_k):

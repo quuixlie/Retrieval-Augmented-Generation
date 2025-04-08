@@ -9,7 +9,6 @@ from session_data import SessionData
 
 db = SQLAlchemy()
 
-
 def register_cli_arguments(app: Flask) -> None:
     """
     Registers CLI arguments for the application.
