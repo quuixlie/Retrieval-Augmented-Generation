@@ -59,8 +59,9 @@ def new():
         config_id = ConfigModel.get_default().id
 
     new_conversation = ConversationModel(title="Conversation", active_config_id=config_id)
-    new_conversation.title = "Conversation " + str(new_conversation.id)
     db.session.add(new_conversation)
+    db.session.flush()  # Flush to get the id of the new conversation
+    new_conversation.title = "Conversation " + str(new_conversation.id)
     db.session.commit()
 
     print(f"Created new conversation with id: {new_conversation.id}")
@@ -98,21 +99,34 @@ def delete(id: int):
     """
     Deletes the conversation with given id
     """
+
+    # TODO :: Return meaningful errors
+
     if not id:
         print("No del_id provided")
         return "", 400
 
     if not ConversationModel.exists(id):
         print(f"Conversation {id} does not exist - cannot delete it")
-
         return "", 400
 
-    db.session.delete(ConversationModel.query.filter(ConversationModel.id == id).first())
-    db.session.commit()
+    url = AppConfig.API_BASE_URL + url_for("api.delete_collection", conversation_id=id)
+    response = requests.delete(url)
 
-    print(ConversationModel.query.filter(ConversationModel.id == id).first())
+    try:
+        responseJSON = response.json()
 
-    return "", 200
+        if responseJSON.get("error", None):
+            return "", 400
+
+        db.session.delete(ConversationModel.query.filter(ConversationModel.id == id).first())
+        db.session.commit()
+
+        return "", 200
+
+    except Exception as e:
+        print(e)
+        return "", 400
 
 
 @chat_bp.route('/send/<int:conversation_id>', methods=["POST"])
