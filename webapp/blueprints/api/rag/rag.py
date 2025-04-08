@@ -8,7 +8,8 @@ from . import vector_db
 
 
 # Keep the model in memory to avoid reloading it every time (For performance)
-model = SentenceTransformer("sentence-transformers/all-MiniLM-L12-v2", device="cuda", model_kwargs={
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L12-v2", device=device, model_kwargs={
     "torch_dtype": torch.float16,
 })
 

@@ -1,5 +1,6 @@
 from pymilvus import MilvusClient, DataType, CollectionSchema, Collection, connections
 from pymilvus.model.reranker import BGERerankFunction
+import torch
 
 
 class VectorDB:
@@ -9,7 +10,8 @@ class VectorDB:
             token="root:Milvus"
         )
 
-        self.reranker = BGERerankFunction(model_name="BAAI/bge-reranker-v2-m3", device="cuda")
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.reranker = BGERerankFunction(model_name="BAAI/bge-reranker-v2-m3", device=device)
 
     def create_collection(self, conversation_d: int, dimension: int) -> None:
         """
