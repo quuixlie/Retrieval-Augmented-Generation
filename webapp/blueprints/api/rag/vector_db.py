@@ -58,10 +58,14 @@ class VectorDB:
 
     def remove_collection(self, conversation_id: int) -> None:
         """
-        Remove a collection from the vector database.
+        Remove a collection from the vector database. If the collection does not exist, do nothing.
         """
         collection_name = self.__get_collection_name_by_id(conversation_id)
-        self.client.drop_collection(collection_name)
+
+        if self.client.has_collection(collection_name):
+            self.client.drop_collection(collection_name)
+        else:
+            return
 
 
     def insert_data(self, conversation_id: int, data: list):

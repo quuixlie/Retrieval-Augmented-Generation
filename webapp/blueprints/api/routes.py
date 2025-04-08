@@ -76,10 +76,8 @@ def delete_collection(conversation_id: int):
     :return: JSON with error at key "error" or success message at key "message"
     """
 
-    # TODO :: tu pisz normlanie
-    if jakis_error:
-        return jsonify({"error": "Error occurred"}), 400
-
+    db = rag.vector_db.VectorDB()
+    db.remove_collection(conversation_id)
 
 
     return jsonify({"message": "Collection deleted"}), 200
