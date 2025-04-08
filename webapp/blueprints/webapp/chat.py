@@ -1,3 +1,4 @@
+import markdown
 import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
@@ -30,6 +31,10 @@ def index(conversation_id: int):
 
     active_configuration = conversation.active_config
     all_configurations = ConfigModel.query.all()
+
+    for message in messages:
+        message.response_html = markdown.markdown(message.response)
+        # message = markdown.markdown(message.text)
 
     return render_template('chat.html', conversation_id=conversation_id, messages=messages,
                            attached_documents=attached_documents,
@@ -154,6 +159,7 @@ def send(conversation_id: int):
     if not message:
         return jsonify({"error": "Message not provided"}), 400
 
+
     url = AppConfig.API_BASE_URL + url_for("api.index", conversation_id=conversation_id)
     config_dict = conversation.active_config.get_values_dict()
 
@@ -166,6 +172,7 @@ def send(conversation_id: int):
             return jsonify({"error": responseJSON.get("error")}), 400
 
         response_message = responseJSON.get("message", None)
+        response_message = markdown.markdown(response_message)
 
         # Saving to the db
         new_message = ChatMessageModel(conversation_id=conversation_id, message=message, response=response_message)

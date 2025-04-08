@@ -13,7 +13,7 @@
                 </div>
                 {% if message.response is not none %}
                     <div class="message left">
-                        {{ message.response }}
+                        {{ message.response_html | safe}}
                     </div>
                 {% endif %}
             {% endfor %}

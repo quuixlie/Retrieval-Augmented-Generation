@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let messageDiv = document.createElement('div');
         let alignment = isResponse ? 'left' : 'right';
         messageDiv.classList.add('message', alignment);
-        messageDiv.innerText = message;
+
+        messageDiv.innerHTML = message;
         return messageDiv;
     }
 
