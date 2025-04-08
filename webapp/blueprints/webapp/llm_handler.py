@@ -34,6 +34,7 @@ def llm(endpoint: str, prompt: str):
         )
         response.raise_for_status()
         data = response.json()
+
         return data['choices'][0]['message']['content']
 
     except requests.exceptions.RequestException as e:
@@ -45,7 +46,7 @@ def llm(endpoint: str, prompt: str):
         return {"error": "Unexpected API response"}
 
 
-def create_prompt(query: str, relevant_documents: list):
+def create_prompt(query: str, relevant_documents_formatted: str) -> str:
     """
     Create a prompt for the LLM based on the query and relevant documents.
     :param query: The user's query
@@ -54,7 +55,31 @@ def create_prompt(query: str, relevant_documents: list):
     """
     prompt = f"Question: {query}\n\n"
     prompt += "Relevant documents:\n"
-    for i, doc in enumerate(relevant_documents):
-        prompt += f"\n================= Document {i + 1} =================\n, {doc}"
+    prompt += relevant_documents_formatted
 
     return prompt
+
+def format_relevant_documents(relevant_documents: list) -> str:
+    """
+    Format the relevant documents for the prompt.
+    :param relevant_documents: List of relevant documents
+    :return: Formatted string of relevant documents
+    """
+    formatted_docs = ""
+    for i, doc in enumerate(relevant_documents):
+        formatted_docs += f"\n================= Document {i + 1} =================\n{doc}"
+
+    return formatted_docs
+
+def format_response(response: str, relevant_documents_formatted: str) -> str:
+    """
+    Format the LLM response.
+    :param response: The LLM response
+    :param relevant_documents_formatted: The formatted relevant documents
+    :return: Formatted string of the response
+    """
+    formatted_response = f"Response:\n{response}\n\n"
+    formatted_response += "Relevant documents:\n"
+    formatted_response += relevant_documents_formatted
+
+    return formatted_response

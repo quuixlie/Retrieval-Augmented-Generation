@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, json
 from .rag import rag
-from ..webapp.llm_handler import llm, create_prompt
+from ..webapp.llm_handler import llm, create_prompt, format_relevant_documents, format_response
 
 api_bp = Blueprint("api", __name__)
 
@@ -25,13 +25,20 @@ def index(conversation_id: int):
 
     # Get relevant documents and create prompt
     relevant_documents = rag.process_query(conversation_id, query)
-    prompt = create_prompt(query, relevant_documents)
+    relevant_documents_formatted = format_relevant_documents(relevant_documents)
+    prompt = create_prompt(query, relevant_documents_formatted)
 
     # Send it to the LLM and get the response
     model_endpoint = config['model_id']
-    response = llm(model_endpoint, prompt)
+    if (model_endpoint != "localhost"):
+        response = llm(model_endpoint, prompt)
+    else:
+        response = "Local LLM not supported yet"
 
-    return jsonify({"message": f"{prompt}"}), 200
+    # Format the response
+    response = format_response(response, relevant_documents_formatted)
+
+    return jsonify({"message": f"{response}"}), 200
 
 
 #
