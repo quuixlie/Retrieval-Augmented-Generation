@@ -4,16 +4,26 @@ from pymilvus.model.reranker import BGERerankFunction
 
 class VectorDB:
     def __init__(self):
-        self.client = MilvusClient("instance/vector_database.db")
+        self.client = MilvusClient(
+            uri="http://localhost:19530",
+            token="root:Milvus"
+        )
 
-
-    def create_collection(self, collection_name: str, dimension: int) -> None:
+    def create_collection(self, conversation_d: int, dimension: int) -> None:
         """
         Create a collection in the vector database.
         """
+        collection_name = self.__get_collection_name_by_id(conversation_d)
         self.client.create_collection(collection_name, dimension, schema = self.__create_schema(dimension))
         self.client.create_index(collection_name, index_params = self.__create_index())
 
+    def __get_collection_name_by_id(self, conversation_id: int) -> str:
+        """
+        Get the collection name by conversation ID.
+        :param conversation_id: ID of the conversation
+        :return: collection name
+        """
+        return f"conversation_{conversation_id}"
 
     def __create_schema(self, dimension: int) -> CollectionSchema:
         """
@@ -46,36 +56,42 @@ class VectorDB:
         return index_params
 
 
-    def remove_collection(self, collection_name: str):
+    def remove_collection(self, conversation_id: int) -> None:
         """
         Remove a collection from the vector database.
         """
+        collection_name = self.__get_collection_name_by_id(conversation_id)
         self.client.drop_collection(collection_name)
 
 
-    def insert_data(self, collection_name: str, data: list):
+    def insert_data(self, conversation_id: int, data: list):
         """
         Insert data into the vector database.
         """
+        collection_name = self.__get_collection_name_by_id(conversation_id)
         self.client.insert(collection_name, data = data)
-        self.client.flush(collection_name)
 
 
-    def search(self, collection_name: str, query_embedding: list):
+    def search(self, conversation_id: int, query_embedding: list):
         """
         Search for similar vectors in the vector database.
         """
+        collection_name = self.__get_collection_name_by_id(conversation_id)
+        self.client.load_collection(collection_name)
         search_params = {
             "metric_type": "COSINE",
         }
 
-        results = self.client.search(collection_name, anns_field = "embedding", data = query_embedding, search_params = search_params,
-                                     limit = 11, output_fields = ["text"])
+        try:
+            results = self.client.search(collection_name, anns_field = "embedding", data = query_embedding, search_params = search_params,
+                                        limit = 11, output_fields = ["text"])
+        finally:
+            self.client.release_collection(collection_name)
 
         return results
 
 
-    def rerank(self, results: list, query: str, top_k: int = 4):
+    def rerank(self, results: list, query: str, top_k: int = 4) -> list:
         """
         Rerank the results based on the query embedding.
         """
@@ -87,7 +103,5 @@ class VectorDB:
         output = []
         for i in range(top_k):
             output.append(reranked_results[i].text)
-
-        output = "\n".join(output)
 
         return output

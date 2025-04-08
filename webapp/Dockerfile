@@ -4,15 +4,6 @@ FROM python:3.12-slim
 # Ustawienie katalogu roboczego w kontenerze
 WORKDIR /app
 
-# Tworzenie użytkownika i grupy
-#ARG UID=1000
-#ARG GID=1000
-#RUN set -x && \
-#    groupadd -g "${GID}" python && \
-#    useradd --create-home --no-log-init -u "${UID}" -g "${GID}" python
-
-#USER python
-
 # Instalacja torcha z cpu
 RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
@@ -31,6 +22,14 @@ COPY . /app/
 # Ustawienie zmiennej środowiskowej wskazującej na aplikację Flask
 ENV FLASK_APP=app.py
 
+# Zmienna środowiskowa dla konfiguracji PostgreSQL
+ENV POSTGRES_HOST=localhost
+ENV POSTGRES_PORT=6921
+ENV POSTGRES_DB=flaskragdb
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=12345
+
+# Inne zmienne środowiskowe
 ENV PYTHONUNBUFFERED=1
 ENV PATH="$PATH:/home/python/.local/bin"
 

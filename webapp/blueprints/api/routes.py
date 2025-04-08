@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, json
-from .rag import rag_input
-from ..webapp.llm_handler import llm
+from .rag import rag
+from ..webapp.llm_handler import llm, create_prompt
 
 api_bp = Blueprint("api", __name__)
 
@@ -23,17 +23,15 @@ def index(conversation_id: int):
     if not config:
         return jsonify({"error": "Config not provided"}), 400
 
+    # Get relevant documents and create prompt
+    relevant_documents = rag.process_query(conversation_id, query)
+    prompt = create_prompt(query, relevant_documents)
+
+    # Send it to the LLM and get the response
     model_endpoint = config['model_id']
-    data = ''
-    if model_endpoint == 'localhost':
-        data = rag_input.process_query(conversation_id, query)
-    else:
-        data = llm(model_endpoint, query)
+    response = llm(model_endpoint, prompt)
 
-    # Process the query
-    # result = rag_input.process_query(conversation_id, query)
-
-    return jsonify({"message": f"{data}"}), 200
+    return jsonify({"message": f"{prompt}"}), 200
 
 
 #
@@ -58,6 +56,6 @@ def upload_documents(conversation_id: int):
         return jsonify({"error": "No files provided"}), 400
 
     for file in files:
-        rag_input.process_document(conversation_id, file)
+        rag.process_document(conversation_id, file)
 
     return jsonify({"message": "Files uploaded"}), 200
