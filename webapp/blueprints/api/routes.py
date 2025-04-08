@@ -23,6 +23,9 @@ def index(conversation_id: int):
     if not config:
         return jsonify({"error": "Config not provided"}), 400
 
+    if not rag.can_process_query(conversation_id):
+        return jsonify({"error": "No documents uploaded"}), 400
+
     # Get relevant documents and create prompt
     relevant_documents = rag.process_query(conversation_id, query)
     relevant_documents_formatted = format_relevant_documents(relevant_documents)
@@ -76,10 +79,8 @@ def delete_collection(conversation_id: int):
     :return: JSON with error at key "error" or success message at key "message"
     """
 
-    # TODO :: tu pisz normlanie
-    if jakis_error:
-        return jsonify({"error": "Error occurred"}), 400
-
+    db = rag.vector_db.VectorDB()
+    db.remove_collection(conversation_id)
 
 
     return jsonify({"message": "Collection deleted"}), 200
