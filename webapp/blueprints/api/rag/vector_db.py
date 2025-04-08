@@ -10,6 +10,7 @@ class VectorDB:
             token="root:Milvus"
         )
 
+        # Keep the model in memory to avoid reloading it every time (For performance)
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.reranker = BGERerankFunction(model_name="BAAI/bge-reranker-v2-m3", device=device)
 
