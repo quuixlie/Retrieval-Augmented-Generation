@@ -1,10 +1,8 @@
 from pymupdf import Document
 from werkzeug.datastructures import FileStorage
 from sentence_transformers import SentenceTransformer
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 import pymupdf4llm
 from . import vector_db
-from openai import OpenAI
 
 
 def process_document(conversation_id: int, document: FileStorage):
@@ -76,25 +74,3 @@ def process_query(conversation_id: int, query: str) -> list:
     result = db.rerank(results, query)
 
     return result
-
-
-def __get_response_from_llm(prompt: str, document: str):
-    initial_prompt = """You will get a prompt in the format: QUESTION <START_PROBABLY_HELPFUL_TEXT> CONTENT HERE <END_PROBABLY_HELPFUL_TEXT>. Answer as briefly as possible. Use the help text only if you don't know the answer yourself."""
-    api_key = ""
-
-    # Create a prompt in proper format
-    prompt = prompt + " <START_PROBABLY_HELPFUL_TEXT>" + document + "<END_PROBABLY_HELPFUL_TEXT>"
-    #
-    # openai_client = OpenAI(
-    #     api_key = api_key
-    # )
-    #
-    # response = openai_client.responses.create(
-    #     model="gpt-3.5-turbo",
-    #     instructions=initial_prompt,
-    #     input=prompt
-    # )
-
-    response = ""
-    output = f"{response}\n\n\n" + "Based on: \n\n" + document
-    return output
