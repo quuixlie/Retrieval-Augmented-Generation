@@ -22,20 +22,9 @@ def upload(conversation_id: int):
     files = request.files.getlist("files")
 
     for file in files:
-        path_name = secure_filename(str(UUID(bytes=os.urandom(16))) + ".pdf")
-        while DocumentModel.exists_with_path(path_name):
-            path_name = secure_filename(str(UUID(bytes=os.urandom(16))) + ".pdf")
-
-        document = DocumentModel(conversation_id=conversation_id, name=file.filename, path=path_name)
-
-        path = os.path.join(AppConfig.UPLOAD_DIRECTORY, path_name)
+        document = DocumentModel(conversation_id=conversation_id, name=file.filename)
 
         try:
-            file.save(path)
-
-            # Resetting the cursor to allow reading the file again
-            file.seek(0)
-
             db.session.add(document)
             db.session.commit()
         except Exception as e:

@@ -136,11 +136,3 @@ class DocumentModel(db.Model):
 
     """Original name of the file"""
     name = db.Column(db.String(64))
-
-    """Name of the file that is stored on the server (within the upload folder)"""
-    path = db.Column(db.String(256))
-
-    @staticmethod
-    def exists_with_path(path: str) -> bool:
-        """Returns true if document with given path (within the upload folder) exists"""
-        return DocumentModel.query.filter_by(path=path).first() is not None

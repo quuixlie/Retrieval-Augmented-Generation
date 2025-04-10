@@ -35,7 +35,6 @@ class AppConfig:
 
         AppConfig.__load_env()
         AppConfig.__read_secret_key()
-        AppConfig.__create_upload_directory()
         AppConfig.__set_available_models()
 
         print("Initialized AppConfig")
@@ -51,20 +50,6 @@ class AppConfig:
         AppConfig.MILVUS_URL = os.getenv("MILVUS_URL")
         AppConfig.API_BASE_URL = os.getenv("API_BASE_URL")
         AppConfig.OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
-        print(AppConfig.SQLALCHEMY_DATABASE_URI)
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
-        print("DB STR")
 
         if not AppConfig.SQLALCHEMY_DATABASE_URI:
             print("DB_CONNECTION_STRING Environment variable not set - terminal error exiting")
