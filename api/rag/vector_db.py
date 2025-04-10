@@ -5,8 +5,10 @@ import torch
 
 class VectorDB:
     def __init__(self):
+        from appconfig import AppConfig
+
         self.client = MilvusClient(
-            uri="http://localhost:19530",
+            uri=AppConfig.MILVUS_URL,
             token="root:Milvus"
         )
 
@@ -19,8 +21,8 @@ class VectorDB:
         Create a collection in the vector database.
         """
         collection_name = self.__get_collection_name_by_id(conversation_d)
-        self.client.create_collection(collection_name, dimension, schema = self.__create_schema(dimension))
-        self.client.create_index(collection_name, index_params = self.__create_index())
+        self.client.create_collection(collection_name, dimension, schema=self.__create_schema(dimension))
+        self.client.create_index(collection_name, index_params=self.__create_index())
 
     def __get_collection_name_by_id(self, conversation_id: int) -> str:
         """
@@ -38,12 +40,11 @@ class VectorDB:
         schema = MilvusClient.create_schema()
 
         # Add fields to the schema
-        schema.add_field("id", datatype = DataType.INT64, is_primary = True, auto_id = True)
-        schema.add_field("embedding", datatype = DataType.FLOAT_VECTOR, dim = dimension)
-        schema.add_field("text", datatype = DataType.VARCHAR, max_length = 65535)
+        schema.add_field("id", datatype=DataType.INT64, is_primary=True, auto_id=True)
+        schema.add_field("embedding", datatype=DataType.FLOAT_VECTOR, dim=dimension)
+        schema.add_field("text", datatype=DataType.VARCHAR, max_length=65535)
 
         return schema
-
 
     def __create_index(self):
         """
@@ -53,13 +54,12 @@ class VectorDB:
         # Create an index for the embedding field
         index_params = self.client.prepare_index_params()
         index_params.add_index(
-            field_name = "embedding",
-            index_type = "FLAT", # or "HNSW"
-            metric_type = "COSINE",
+            field_name="embedding",
+            index_type="FLAT",  # or "HNSW"
+            metric_type="COSINE",
         )
 
         return index_params
-
 
     def remove_collection(self, conversation_id: int) -> None:
         """
@@ -72,7 +72,6 @@ class VectorDB:
         else:
             return
 
-
     def has_collection(self, conversation_id: int) -> bool:
         """
         Check if a collection exists in the vector database.
@@ -82,14 +81,12 @@ class VectorDB:
         collection_name = self.__get_collection_name_by_id(conversation_id)
         return self.client.has_collection(collection_name)
 
-
     def insert_data(self, conversation_id: int, data: list):
         """
         Insert data into the vector database.
         """
         collection_name = self.__get_collection_name_by_id(conversation_id)
-        self.client.insert(collection_name, data = data)
-
+        self.client.insert(collection_name, data=data)
 
     def search(self, conversation_id: int, query_embedding: list):
         """
@@ -102,13 +99,13 @@ class VectorDB:
         }
 
         try:
-            results = self.client.search(collection_name, anns_field = "embedding", data = query_embedding, search_params = search_params,
-                                        limit = 11, output_fields = ["text"])
+            results = self.client.search(collection_name, anns_field="embedding", data=query_embedding,
+                                         search_params=search_params,
+                                         limit=11, output_fields=["text"])
         finally:
             self.client.release_collection(collection_name)
 
         return results
-
 
     def rerank(self, results: list, query: str, top_k: int = 4) -> list:
         """

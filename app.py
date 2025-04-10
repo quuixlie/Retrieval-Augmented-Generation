@@ -2,12 +2,11 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask import session
-import click
 
 import session_data
-from session_data import SessionData
 
 db = SQLAlchemy()
+
 
 def register_cli_arguments(app: Flask) -> None:
     """
@@ -48,8 +47,8 @@ def create_app() -> Flask:
     migrate = Migrate(app, db)
 
     # Registering blueprints and routes
-    from blueprints import webapp_bp
-    from blueprints import api_bp
+    from webapp.routes import webapp_bp
+    from api.routes import api_bp
 
     app.register_blueprint(webapp_bp, url_prefix="/")
     app.register_blueprint(api_bp, url_prefix="/api")
@@ -73,7 +72,7 @@ def create_app() -> Flask:
                 session.setdefault(k, v)
 
     # Injecting conversations list to every template so it doesn't have to be manually passed
-    from blueprints.webapp.models import ConversationModel
+    from webapp.models import ConversationModel
 
     @app.context_processor
     def inject_conversations():

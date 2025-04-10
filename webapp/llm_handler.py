@@ -1,17 +1,8 @@
-import json
 import os
 from dotenv import load_dotenv
-from os import getenv
-
 import requests
-
-# OPENROUTER_API_KEY = getenv("OPENROUTER_API_KEY")
 
 load_dotenv()
-
-
-
-import requests
 
 def llm(endpoint: str, prompt: str):
     api = os.getenv("OPENROUTER_API_KEY")
@@ -59,6 +50,7 @@ def create_prompt(query: str, relevant_documents_formatted: str) -> str:
 
     return prompt
 
+
 def format_relevant_documents(relevant_documents: list) -> str:
     """
     Format the relevant documents for the prompt.
@@ -70,6 +62,7 @@ def format_relevant_documents(relevant_documents: list) -> str:
         formatted_docs += f"\n================= Document {i + 1} =================\n{doc}"
 
     return formatted_docs
+
 
 def format_response(response: str, relevant_documents_formatted: str) -> str:
     """

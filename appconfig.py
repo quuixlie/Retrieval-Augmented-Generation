@@ -13,10 +13,13 @@ class AppConfig:
     The user must call the initialize method to initialize the configuration
     """
     SECRET_KEY = None
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:12345@localhost:6921/flaskragdb"
     UPLOAD_DIRECTORY = os.path.join("instance", "uploads")
 
-    API_BASE_URL = "http://127.0.0.1:5000"
+    """These should be set through environment variables"""
+    SQLALCHEMY_DATABASE_URI = None
+    MILVUS_URL = None
+    API_BASE_URL = None
+    OPENROUTER_API_KEY = None
 
     """
     List of available models
@@ -30,11 +33,54 @@ class AppConfig:
         """
         print("Initializing AppConfig")
 
+        AppConfig.__load_env()
         AppConfig.__read_secret_key()
         AppConfig.__create_upload_directory()
         AppConfig.__set_available_models()
 
         print("Initialized AppConfig")
+
+    @staticmethod
+    def __load_env():
+        """
+        Loads envvars
+        :return:
+        """
+
+        AppConfig.SQLALCHEMY_DATABASE_URI = os.getenv("DB_CONNECTION_STRING")
+        AppConfig.MILVUS_URL = os.getenv("MILVUS_URL")
+        AppConfig.API_BASE_URL = os.getenv("API_BASE_URL")
+        AppConfig.OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+        print(AppConfig.SQLALCHEMY_DATABASE_URI)
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+        print("DB STR")
+
+        if not AppConfig.SQLALCHEMY_DATABASE_URI:
+            print("DB_CONNECTION_STRING Environment variable not set - terminal error exiting")
+            exit(-1)
+
+        if not AppConfig.MILVUS_URL:
+            print("MILVUS_URL Environment variable not set - terminal error exiting")
+            exit(-1)
+
+        if not AppConfig.API_BASE_URL:
+            print("API_BASE_URL Environment variable not set - terminal error exiting")
+            exit(-1)
+
+        if not AppConfig.OPENROUTER_API_KEY:
+            print("OPENROUTER_API_KEY Environment variable not set - terminal error exiting")
+            exit(-1)
 
     @staticmethod
     def __set_available_models():
@@ -109,7 +155,7 @@ class AppConfig:
 
         print("Creating default configuration")
         # Create default config
-        from blueprints.webapp.models import ConfigModel
+        from webapp.models import ConfigModel
         with app.app_context():
             default_config = ConfigModel(id=0, name="Default", model_id=AppConfig.AVAILABLE_MODELS[0]['id'] if len(
                 AppConfig.AVAILABLE_MODELS) > 0 else "google/gemini-2.5-pro-exp-03-25:free",
@@ -137,7 +183,7 @@ class AppConfig:
 
             print("Database successfully created")
             # Ensuring default config is in the db
-            from blueprints.webapp.models import ConfigModel
+            from webapp.models import ConfigModel
             try:
                 ConfigModel.get_default()
             except ValueError as e:

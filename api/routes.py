@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, json
 from .rag import rag
-from ..webapp.llm_handler import llm, create_prompt, format_relevant_documents, format_response
+from webapp.llm_handler import llm, create_prompt, format_relevant_documents, format_response
 
 api_bp = Blueprint("api", __name__)
 

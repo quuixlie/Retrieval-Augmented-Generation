@@ -6,7 +6,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, jsonif
 from werkzeug.utils import secure_filename
 
 from app import db
-from blueprints.webapp.models import ConversationModel, DocumentModel
+from webapp.models import ConversationModel, DocumentModel
 from appconfig import AppConfig
 
 documents_bp = Blueprint("documents", __name__)

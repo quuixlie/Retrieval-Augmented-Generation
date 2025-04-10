@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, request, Blueprint
 
 from app import db
 from appconfig import AppConfig
-from blueprints.webapp.models import ConfigModel
+from webapp.models import ConfigModel
 
 cfg_bp = Blueprint("cfg", __name__)
 

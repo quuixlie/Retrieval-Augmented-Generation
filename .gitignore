@@ -157,7 +157,29 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# IPython
+instance
+migrations
+.venv
+venv
+
+
+#
+#
+#
+#
+##
+#
+#
+#
+#
+#
+#
+#
+
+
+
+
+
 profile_default/
 ipython_config.py
 

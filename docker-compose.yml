@@ -1,0 +1,76 @@
+
+volumes:
+  milvus_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+services:
+  milvus:
+    build:
+      context: docker/milvus
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_USE_EMBED: "true"
+      ETCD_DATA_DIR: /var/lib/milvus/etcd
+      ETCD_CONFIG_PATH: /milvus/configs/embedEtcd.yaml
+      COMMON_STORAGETYPE: "local"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 90s
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+      - "2379:2379"
+    volumes:
+      - milvus_data:/var/lib/milvus
+      - ./docker/milvus/embedEtcd.yaml:/milvus/configs/embedEtcd.yaml
+      - ./docker/milvus/user.yaml:/milvus/configs/user.yaml
+    command:
+      milvus run standalone
+    restart:
+      unless-stopped
+
+  postgres:
+    build:
+      context: docker/postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "--username=${DB_USER}", "--dbname=${DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart:
+      unless-stopped
+
+  webapp:
+    build:
+      context: .
+      dockerfile: ./docker/webapp/Dockerfile
+    environment:
+      MILVUS_URL: http://milvus:19530
+      API_BASE_URL: http://webapp:8080
+      DB_CONNECTION_STRING: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+    ports:
+      - "8080:8080"
+    restart:
+      unless-stopped
+    depends_on:
+      milvus:
+        condition:
+          service_healthy
+      postgres:
+        condition: 
+          service_healthy

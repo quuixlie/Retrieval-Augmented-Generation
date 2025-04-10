@@ -8,33 +8,36 @@ WORKDIR /app
 RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 # Pobieranie modeli
-RUN pip install FlagEmbedding sentence-transformers
-RUN python -c "from FlagEmbedding import BGEM3FlagModel; model = BGEM3FlagModel('BAAI/bge-reranker-v2-m3')"
-RUN python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L12-v2')"
+RUN pip install sentence-transformers
+RUN python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L12-v2');"
 
-# Instalacja zależności aplikacji
-COPY requirements.txt /app/
+RUN pip install FlagEmbedding
+RUN python -c "from FlagEmbedding import BGEM3FlagModel; model = BGEM3FlagModel('BAAI/bge-reranker-v2-m3')"
+
+WORKDIR /app
+
+# Kopiowane zaleznosci 
+COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiowanie reszty aplikacji do obrazu
-COPY . /app/
+COPY ./app.py .
+COPY ./appconfig.py .
+COPY ./session_data.py .
+COPY ./api ./api
+COPY ./webapp ./webapp
 
 # Ustawienie zmiennej środowiskowej wskazującej na aplikację Flask
-ENV FLASK_APP=app.py
-
-# Zmienna środowiskowa dla konfiguracji PostgreSQL
-ENV POSTGRES_HOST=localhost
-ENV POSTGRES_PORT=6921
-ENV POSTGRES_DB=flaskragdb
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=12345
+ENV FLASK_APP=./app.py
 
 # Inne zmienne środowiskowe
 ENV PYTHONUNBUFFERED=1
 ENV PATH="$PATH:/home/python/.local/bin"
 
 # Otwarcie portu, na którym aplikacja będzie działać
-EXPOSE 5000
+EXPOSE 8080
 
-# Komenda uruchamiająca aplikację Flask
-CMD ["flask", "run", "--host=0.0.0.0"]
+# WSGI
+RUN pip install gunicorn
+
+CMD [ "gunicorn", "--bind", "0.0.0.0:8080", "app:create_app()", "--workers", "4", "--timeout", "999999" ]
