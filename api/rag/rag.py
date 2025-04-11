@@ -10,7 +10,7 @@ import os
 
 
 # https://github.com/huggingface/transformers/issues/5486
-os.environ["TOKENIZERS_PARALLELISM"] = "true"  # Disable parallelism in tokenizers to avoid issues with multiprocessing
+os.environ["TOKENIZERS_PARALLELISM"] = "true"  # Explicty set Parallelism in tokenizers to avoid issues with multiprocessing
 
 
 # Keep the model in memory to avoid reloading it every time (For performance)
