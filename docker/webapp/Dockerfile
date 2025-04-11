@@ -4,9 +4,6 @@ FROM python:3.12-slim
 # Ustawienie katalogu roboczego w kontenerze
 WORKDIR /app
 
-# Instalacja torcha z cpu
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-
 # Pobieranie modeli
 RUN pip install sentence-transformers
 RUN python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L12-v2');"
