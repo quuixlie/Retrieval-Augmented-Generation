@@ -7,34 +7,36 @@
 {% block content %}
     <div class="config-wrapper">
         <h1>Retrieval Augmented Generation</h1>
-        <h2>Configurations</h2>
-        <br>
-        <p><strong>Click on a configuration to navigate to a new conversation with this config</strong></p>
-        <div class="config-list">
-            {% for config in configs %}
-                <a class="no-decor" href="{{ url_for("webapp.chat.new",config_id=config.id) }}">
-                    <div class="config-item">
-                        <div class="flex-row space-between flex-content-center">
-                            <span><strong>{{ config.name }}</strong></span>
-                            {% if not config.is_default %}
-                                <form action="{{ url_for("webapp.cfg.delete",cfg_id=config.id) }}">
-                                    <button type="submit" class="btn">
+        <div>
+            <h2>Configurations</h2>
+            <br>
+            <p>(Click on a configuration to navigate to a new conversation with this config)</p>
+            <div class="config-list">
+                {% for config in configs %}
+                    <a class="no-decor" href="{{ url_for("webapp.chat.new",config_id=config.id) }}">
+                        <div class="config-item">
+                            <div class="flex-row space-between flex-content-center">
+                                <span><strong>{{ config.name }}</strong></span>
+                                {% if not config.is_default %}
+                                    <form action="{{ url_for("webapp.cfg.delete",cfg_id=config.id) }}">
+                                        <button type="submit" class="btn">
 
-                                        <img src="{{ url_for("webapp.static",filename="icons/trashcan.svg") }}" alt=""
-                                             width="16" height="16">
-                                    </button>
-                                </form>
-                            {% endif %}
+                                            <img src="{{ url_for("webapp.static",filename="icons/trashcan.svg") }}" alt=""
+                                                 width="16" height="16">
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                            <div class="config-details">
+                                <p>Model id: {{ config.model_id }}</p>
+                                <p>Model name: {{ config.model_name }}</p>
+                                <p>Chunk Size: {{ config.chunk_size }}</p>
+                                <p>Document Count: {{ config.document_count }}</p>
+                            </div>
                         </div>
-                        <div class="config-details">
-                            <p>Model id: {{ config.model_id }}</p>
-                            <p>Model name: {{ config.model_name }}</p>
-                            <p>Chunk Size: {{ config.chunk_size }}</p>
-                            <p>Document Count: {{ config.document_count }}</p>
-                        </div>
-                    </div>
-                </a>
-            {% endfor %}
+                    </a>
+                {% endfor %}
+            </div>
         </div>
         <a href="{{ url_for("webapp.cfg.create") }}">
             <div class="btn">
