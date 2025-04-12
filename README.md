@@ -33,7 +33,7 @@
     ```
     MILVUS_URL=<RUNNING_MILVUS_URL_HERE> (or a path in case of local milvus installation)
     
-    API_BASE_URL=http:/localhost:<PORT_OF_FLASK_APP>
+    API_BASE_URL=http://localhost:<PORT_OF_FLASK_APP>
     
     # Postgres is the preferred database
     DB_CONNECTION_STRING=postgresql://<YOUR_USERNAME>:<YOUR_USER_PASSWORD>@localhost:5432/<YOUR_DB_NAME>
