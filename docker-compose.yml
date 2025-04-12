@@ -12,10 +12,10 @@ services:
     security_opt:
       - seccomp:unconfined
     environment:
-      ETCD_USE_EMBED: "true"
+      ETCD_USE_EMBED: true
       ETCD_DATA_DIR: /var/lib/milvus/etcd
       ETCD_CONFIG_PATH: /milvus/configs/embedEtcd.yaml
-      COMMON_STORAGETYPE: "local"
+      COMMON_STORAGETYPE: local
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9091/healthz" ]
       interval: 30s
