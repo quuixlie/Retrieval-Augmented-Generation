@@ -1,0 +1,31 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Mask to carve out the plus sign from the chat bubble fill -->
+        <mask id="cutout">
+            <!-- Base white rectangle for full opacity -->
+            <rect x="0" y="0" width="128" height="128" fill="white" />
+            <!-- Horizontal bar of the plus sign (centered at (64,45)) -->
+            <rect x="48" y="52" width="32" height="8" fill="black" />
+            <!-- Vertical bar of the plus sign (centered at (64,45)) -->
+            <rect x="60" y="40" width="8" height="32" fill="black" />
+        </mask>
+    </defs>
+    <!-- Chat bubble shape -->
+    <path
+            d="M20 20
+       h88
+       a12 12 0 0 1 12 12
+       v48
+       a12 12 0 0 1 -12 12
+       h-32
+       l-12 12
+       -12 -12
+       h-32
+       a12 12 0 0 1 -12 -12
+       v-48
+       a12 12 0 0 1 12 -12
+       z"
+            fill="white"
+            mask="url(#cutout)"
+    />
+</svg>

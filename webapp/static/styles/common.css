@@ -1,7 +1,5 @@
-/* blueprints/webapp/static/styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
 
 * {
     margin: 0;
@@ -15,8 +13,8 @@ html {
 }
 
 body {
-    background-color: #212121;
-    color: #e0e0e0;
+    background-color: var(--color-background);
+    color: var(--color-on-primary)
 }
 
 h1, h2 {
@@ -24,24 +22,63 @@ h1, h2 {
     font-weight: 300;
 }
 
-/* Scrollbar styling */
+:root {
+    --color-primary: #424242;
+    --color-primary-variant: #515151;
+
+    --color-secondary: #303030;
+    --color-secondary-variant: #393939;
+
+    --color-background: #111111;
+    --color-surface: #212121;
+    --color-surface-variant: #282828;
+
+    --color-on-primary: #ffffff;
+    --color-on-secondary: rgba(255, 255, 255, 0.7);
+    --color-on-surface: #ffffff;
+
+    --color-error: #cf6679;
+    --color-on-error: #000000;
+
+    --color-success: #66bb6a;
+    --color-on-success: #000000;
+
+    --color-info: #2196f3;
+    --color-on-info: #ffffff;
+
+    --corner-radius-small: 5px;
+    --corner-radius-medium: 10px;
+    --corner-radius-large: 15px;
+    --corner-radius-circle: 50%;
+}
+
+.primary {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+.secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-on-secondary);
+}
+
+
 ::-webkit-scrollbar {
     width: 0.8vw;
 }
 
 ::-webkit-scrollbar-track {
-    background: #1a1a1a;
+    background: var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #333;
+    background: var(--color-surface-variant);
     border-radius: 0.4vw;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #444;
+    background: var(--color-primary);
 }
-
 
 #popup-container {
     position: absolute;
@@ -78,33 +115,59 @@ h1, h2 {
     }
 }
 
-
 .btn {
-    padding: 10px;
-    border: none;
-    border-radius: 9px;
-    background-color: #676767;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 20px;
+
+    border-radius: var(--corner-radius-large);
     cursor: pointer;
+
+    border: none;
+
     transition: background-color 0.3s;
 }
 
-.btn:hover {
-    background-color: #707070;
+.btn.primary:hover {
+    background-color: var(--color-primary-variant);
 }
 
-
-.btn-icon {
-    background: transparent;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.3s;
+.btn.secondary:hover {
+    background-color: var(--color-secondary-variant);
 }
 
-.btn > img {
-    height: 30px;
-    width: 30px;
+.btn.btn-icon {
+    container-type: size;
+    aspect-ratio: 1/1;
+    flex: 0 0 auto;
+    padding:0;
 }
+
+.btn.btn-icon.sm {
+    width: 24px;
+}
+
+.btn.btn-icon.md {
+    width: 40px;
+}
+
+.btn.btn-icon.lg {
+    width: 56px;
+}
+
+.btn.btn-icon > img {
+    width: 60cqw;
+    height: 60cqh;
+    object-fit: contain;
+}
+
+.btn.btn-icon > span {
+    font-size: 60cqh;
+    font-weight: bold;
+}
+
 
 .text-input-container {
     display: flex;
@@ -114,19 +177,36 @@ h1, h2 {
 
 .text-input {
     padding: 10px;
-    border: 1px solid #333;
+    border: 1px solid var(--color-background);
     border-radius: 9px;
-    background-color: #212121;
+    background-color: var(--color-surface);
     color: #e0e0e0;
-    margin: 5px 0;
+    resize: none;
+
+    transition: border 0.3s;
 }
+
+.text-input:hover {
+    border-color: var(--color-secondary);
+}
+
+.text-input:focus {
+    border-color: var(--color-primary);
+    outline: none;
+}
+
+input[type="number"].text-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 
 .combo-box {
     padding: 10px 30px 10px 10px;
-    border: 1px solid #333;
+    border: 1px solid var(--color-background);
     border-radius: 5px;
-    background-color: #1f1f1f;
-    color: #e0e0e0;
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -136,15 +216,84 @@ h1, h2 {
     background-size: 10px;
 }
 
+.combo-box:focus {
+    border-color: var(--color-primary);
+}
+
 .combo-box option {
-    background-color: #1f1f1f;
-    color: #e0e0e0;
+    background-color: var(--color-secondary);
+    color: var(--color-on-secondary);
 }
 
-
-.hover:hover {
-    background-color: #5a2a2a;
+.dropdown {
+    position: relative;
 }
+
+.dropdown-button {
+
+    max-width: inherit;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.dropdown-button * {
+    max-width: inherit;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.dropdown-menu {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    max-height: 0;
+    max-width: 35vw;
+    overflow-y: auto;
+
+    cursor: default;
+
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    border-radius: var(--corner-radius-large);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+
+
+    transition: max-height 0.3s ease-out
+
+}
+
+.dropdown-menu.up {
+    top: auto;
+    bottom: 100%;
+    left: 0;
+}
+
+.dropdown:hover .dropdown-menu {
+    max-height: 40vh;
+}
+
+.dropdown-menu > * {
+    border-radius: var(--corner-radius-large);
+    color: inherit;
+    text-decoration: none;
+}
+
+.dropdown-menu * {
+
+    max-width: inherit;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.dropdown-menu > *:hover {
+    background-color: var(--color-surface-variant);
+}
+
 
 .fill-width {
     width: 100%;
@@ -195,6 +344,14 @@ h1, h2 {
     justify-content: space-between;
 }
 
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
 .no-decor {
     text-decoration: none;
     list-style: none;
@@ -213,23 +370,25 @@ h1, h2 {
 }
 
 .white {
-    color:white;
-}
-
-.bg-gray {
-    background-color: gray;
+    color: white;
 }
 
 .bg-error {
-    background-color: #8d4d4d;
+    background-color: var(--color-error);
+    color: var(--color-on-error);
 }
 
 .bg-success {
-    background-color: #4d8d4d;
+    background-color: var(--color-success);
+    color: var(--color-on-success);
 }
 
 .bg-info {
-    background-color: #4d8d8d;
+    background-color: deeppink;
+}
+
+.bg-none {
+    background: none;
 }
 
 .pad-16 {
@@ -237,8 +396,8 @@ h1, h2 {
 }
 
 .loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #676767;
+    border: 4px solid white;
+    border-top: 4px solid var(--color-primary);
     border-radius: 50%;
 
     width: 20px;
