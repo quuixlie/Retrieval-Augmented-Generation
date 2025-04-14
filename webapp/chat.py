@@ -29,12 +29,12 @@ def index(conversation_id: int):
     attached_documents = DocumentModel.query.filter(DocumentModel.conversation_id == conversation_id).all()
 
     active_configuration = conversation.active_config
-    all_configurations = ConfigModel.query.all()
+    other_configurations = ConfigModel.query.filter(ConfigModel.id != active_configuration.id).all()
 
     return render_template('chat.html', conversation_id=conversation_id, messages=messages,
                            attached_documents=attached_documents,
                            active_configuration=active_configuration,
-                           all_configurations=all_configurations,
+                           other_configurations=other_configurations,
                            popup_success=False if error_msg else None,
                            popup_msg=error_msg)
 
@@ -100,6 +100,7 @@ def delete(id: int):
     Deletes the conversation with given id
     """
 
+    print("lala")
     # TODO :: Return meaningful errors
 
     if not id:

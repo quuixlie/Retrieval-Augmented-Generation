@@ -2,20 +2,20 @@ import os
 from dotenv import load_dotenv
 import requests
 
-load_dotenv()
+from appconfig import AppConfig
+
 
 def llm(endpoint: str, prompt: str):
-    api = os.getenv("OPENROUTER_API_KEY")
     headers = {
-        'Authorization': f'Bearer {api}',
+        'Authorization': f'Bearer {AppConfig.OPENROUTER_API_KEY}',
         'Content-Type': 'application/json',
     }
     payload = {
         "model": endpoint,
         "messages": [{"role": "user", "content": prompt}]
     }
-    print(headers)
-    print(payload)
+    # print(headers)
+    # print(payload)
 
     try:
         response = requests.post(

@@ -4,6 +4,26 @@
     <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/chat.css') }}"/> {% endblock %}
 {% block content %}
 
+    <div class="chat-config-button dropdown">
+        <div class="dropdown-button chat-config-item">
+            <img src="{{ url_for('webapp.static',filename='icons/cogwheel.svg') }}" alt="cogwheel" width="30"
+                 height="30"/>
+            <span class="flex-1"><strong>{{ active_configuration.name }}</strong></span>
+        </div>
+        <div class="dropdown-menu down" style="max-width:35vw;">
+            {% for config in other_configurations %}
+                <a class="chat-config-item"
+                   href="{{ url_for("webapp.chat.change_config",conversation_id=conversation_id,config_id=config.id) }}">
+                    <img src="{{ url_for('webapp.static',filename='icons/cogwheel.svg') }}" alt="cogwheel"
+                         width="24" height="24"/>
+                    <span>{{ config.name }}</span>
+                </a>
+            {% endfor %}
+            <a style="color:var(--color-on-primary)" class="chat-config-item" href="{{ url_for("webapp.cfg.create") }}">
+                <div>Create new configuration</div>
+            </a>
+        </div>
+    </div>
 
     <div class="chat-wrapper">
         <div class="chat-container">
@@ -19,49 +39,21 @@
             {% endfor %}
         </div>
 
-        <div class="chat-input-container">
-            <div class="btn chat-expand-button">
-                <img src="{{ url_for('webapp.static',filename='icons/file.svg') }}" alt="" width="24"
-                     height="24">
-                <span>Attached Documents</span>
-                {% include 'chat_file_list.html' %}
+        <form class="chat-input-container" id="chatForm"
+              action="{{ url_for("webapp.chat.send",conversation_id=conversation_id) }}">
+            <div class="btn btn-icon lg dropdown">
+                <label class="btn btn-icon lg primary">
+                    <img src="{{ url_for('webapp.static',filename='icons/add_file.svg') }}" alt="File">
+                    <div class="dropdown-menu up" id="documentList">
+                        {% include "chat_file_list.html" %}
+                    </div>
+                    <input class=" hidden" id="documentInput" type="file" accept="application/pdf"
+                           data-url="{{ url_for('webapp.documents.upload', conversation_id=conversation_id) }}" multiple>
+                </label>
             </div>
-            <div class="btn chat-expand-button">
-                <img src="{{ url_for('webapp.static',filename='icons/cogwheel.svg') }}" alt="" width="24"
-                     height="24">
-                <div>
-                    Configuration
-                </div>
-                <div class="chat-expand-btn-items">
-                    {% for config in all_configurations %}
-                        <a class="hover no-decor white"
-                           style="{{ "background-color: #aa3331" if config.id == active_configuration.id else "" }}"
-                           href="{{ url_for("webapp.chat.change_config",conversation_id=conversation_id,config_id=config.id) }}">
-                            <div class="chat-config-item">
-
-                                <img src="{{ url_for("webapp.static",filename="icons/cogwheel.svg") }}" alt="cogwheel"
-                                     width="24"
-                                     height="24"/>
-                                <span>{{ config.name }}</span>
-                            </div>
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
-            <label class="btn chat-expand-button" for="documentInput">
-                <img src="{{ url_for('webapp.static',filename='icons/add_file.svg') }}" alt="" width="24"
-                     height="24">
-                <span>Add Document</span>
-            </label>
-            <input class=" hidden" id="documentInput" type="file" name="files" accept="application/pdf"
-                   data-url="{{ url_for('webapp.documents.upload', conversation_id=conversation_id) }}" multiple
-                   required>
-            <form action="{{ url_for('webapp.chat.send',conversation_id=conversation_id) }}" id="messageInput"
-                  class="chat-input-area">
-                <textarea placeholder="Type your message here" required></textarea>
-                <button type="submit">Send</button>
-            </form>
-        </div>
+            <textarea class="chat-input text-input" placeholder="Type your message here" required></textarea>
+            <button class="btn btn-icon lg primary" type="submit"><span>⮞</span></button>
+        </form>
     </div>
 
     <script src="{{ url_for('webapp.static', filename='scripts/chatHandler.js') }}"></script>

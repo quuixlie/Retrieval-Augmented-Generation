@@ -20,7 +20,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Kopiowanie reszty aplikacji do obrazu
 COPY ./app.py .
 COPY ./appconfig.py .
-COPY ./session_data.py .
 COPY ./api ./api
 COPY ./webapp ./webapp
 

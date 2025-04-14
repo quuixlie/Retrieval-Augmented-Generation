@@ -1,52 +1,56 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const toggleNavCheckbox = document.getElementById('toggleNav');
-    const newChatButton = document.getElementById('newChatButton');
+const toggleNavCheckbox = document.getElementById('toggleNav');
+const newChatButton = document.getElementById('newChatButton');
 
-    const insideButtonsContainer = document.getElementById('insideButtonsContainer');
-    const outsideButtonsContainer = document.getElementById('outsideButtonsContainer');
+const insideButtonsContainer = document.getElementById('insideButtonsContainer');
+const outsideButtonsContainer = document.getElementById('outsideButtonsContainer');
 
-    const savedState = localStorage.getItem('sidebarState');
+const savedState = localStorage.getItem('sidebarState');
 
-    function moveButtonOutside() {
-        newChatButton.remove()
-        outsideButtonsContainer.appendChild(newChatButton);
-    }
+function moveButtonOutside() {
+    newChatButton.remove()
+    outsideButtonsContainer.appendChild(newChatButton);
+}
 
-    function moveButtonInside() {
-        newChatButton.remove()
-        insideButtonsContainer.appendChild(newChatButton);
-    }
+function moveButtonInside() {
+    newChatButton.remove()
+    insideButtonsContainer.appendChild(newChatButton);
+}
 
 
-    function setSidebarState(isOpen) {
-        if (isOpen) {
-            moveButtonInside();
-            localStorage.setItem('sidebarState', 'open');
-        } else {
-            moveButtonOutside();
-            localStorage.setItem('sidebarState', 'closed');
-        }
-    }
-
-    if (savedState === 'open') {
-        toggleNavCheckbox.checked = true;
-        setSidebarState(true);
+function setSidebarState(isOpen) {
+    if (isOpen) {
+        moveButtonInside();
+        localStorage.setItem('sidebarState', 'open');
     } else {
-        toggleNavCheckbox.checked = false;
-        setSidebarState(false);
+        moveButtonOutside();
+        localStorage.setItem('sidebarState', 'closed');
     }
+}
 
-    toggleNavCheckbox.addEventListener('change', function () {
-        const isOpen = toggleNavCheckbox.checked;
-        setSidebarState(isOpen);
-    });
-    newChatButton.addEventListener('click', function (e) {
-        e.preventDefault()
-        const link = e.target.href;
-        setSidebarState(true)
-        window.location.href = link;
-    })
+// Setting initial state
+if (savedState === 'open') {
+    toggleNavCheckbox.checked = true;
+    setSidebarState(true);
+} else {
+    toggleNavCheckbox.checked = false;
+    setSidebarState(false);
+}
+
+setTimeout(() => {
+    document.getElementsByClassName('nav-container')[0].style.transition = 'width 0.2s ease-out';
+}, 50);
+
+
+toggleNavCheckbox.addEventListener('change', function () {
+    const isOpen = toggleNavCheckbox.checked;
+    setSidebarState(isOpen);
 });
+newChatButton.addEventListener('click', function (e) {
+    e.preventDefault()
+    const link = e.target.href;
+    setSidebarState(true)
+    window.location.href = link;
+})
 
 
 // Context menu
@@ -87,8 +91,6 @@ function toggleMenu(event) {
     selectedButton = event.target.closest("button");
     const rect = selectedButton.getBoundingClientRect();
 
-    console.log(selectedButton)
-
     selectedConversationId = selectedButton.getAttribute("data-conversation-id")
 
     showMenu(rect.x, rect.y);
@@ -102,7 +104,6 @@ function deleteConversation(deleteURL, current_conv_id, redirectURL) {
     const listentry = selectedButton.closest('li');
 
     const url = `${deleteURL.slice(0, deleteURL.lastIndexOf("/"))}/${selectedConversationId}`
-    console.log(url)
 
     fetch(url, {
         method: "DELETE",

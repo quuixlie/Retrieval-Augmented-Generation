@@ -71,7 +71,7 @@ def upload_documents(conversation_id: int):
     return jsonify({"message": "Files uploaded"}), 200
 
 
-@api_bp.route('/delete/<int:conversation_id>', methods=["delete"])
+@api_bp.route('/delete/<int:conversation_id>', methods=["DELETE"])
 def delete_collection(conversation_id: int):
     """
     Deletes the collection with given id
