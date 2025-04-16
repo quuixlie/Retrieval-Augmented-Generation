@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const chatForm = document.getElementById("chatForm");
     const documentInput = document.getElementById("documentInput")
-    const messageInput = document.getElementById('messageInput');
+    const messageInput = chatForm.getElementsByTagName("textarea")[0];
 
     // Creating the spinner
     const loader = document.createElement('div');
@@ -40,21 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function lockChat() {
         showLoadingSpinner()
         scrollToBottom()
-        documentInput.disabled = true;
-        messageInput.disabled = true;
-        for (let c of messageInput.children) {
-            c.disabled = true;
+        const elements = chatForm.elements;
+        for (let i = 0; i < elements.length; ++i) {
+            elements[i].readOnly = true;
         }
     }
 
     function unlockChat() {
         hideLoadingSpinner()
         scrollToBottom()
-        documentInput.disabled = false;
-        messageInput.disabled = false;
-        for (let c of messageInput.children) {
-            c.disabled = false;
+        const elements = chatForm.elements;
+        for (let i = 0; i < elements.length; ++i) {
+            elements[i].readOnly = false;
         }
+
     }
 
     function createMessage(message, isResponse) {
@@ -66,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addMessageToChat(message) {
-
 
         let container = document.querySelector('.chat-container');
         container.appendChild(message);
@@ -97,16 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     scrollToBottom()
 
-    let textarea = messageInput.querySelector('textarea');
-    textarea.addEventListener('keydown', (event) => {
+    messageInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             if (event.shiftKey) {
                 // Allow new line
                 event.preventDefault();
-                let cursorPos = textarea.selectionStart;
-                let text = textarea.value;
-                textarea.value = text.substring(0, cursorPos) + "\n" + text.substring(cursorPos);
-                textarea.selectionStart = textarea.selectionEnd = cursorPos + 1;
+                let cursorPos = messageInput.selectionStart;
+                let text = messageInput.value;
+                messageInput.value = text.substring(0, cursorPos) + "\n" + text.substring(cursorPos);
+                messageInput.selectionStart = messageInput.selectionEnd = cursorPos + 1;
             } else {
                 // Submit the form
                 event.preventDefault();
@@ -115,12 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    messageInput.addEventListener('submit', (event) => {
+    chatForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        const inputElement = messageInput.querySelector('textarea');
-        let input = inputElement.value;
+        let input = messageInput.value;
 
-        inputElement.value = '';
+        messageInput.value = '';
 
         if (input.length <= 0)
             return;
@@ -135,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append("message", input);
 
-        const chatUrl = messageInput.getAttribute('action');
+        const chatUrl = chatForm.getAttribute('action');
         fetch(chatUrl, {
             method: "POST",
             body: formData
@@ -165,10 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function refreshFileList(newHTML) {
         const fileList = document.getElementById("documentList")
-        const template = document.createElement('template');
-        template.innerHTML = newHTML.trim();
-        const newFileList = template.content.firstChild;
-        fileList.replaceWith(newFileList);
+        fileList.innerHTML = newHTML.trim()
+
     }
 
     documentInput.addEventListener("change", () => {

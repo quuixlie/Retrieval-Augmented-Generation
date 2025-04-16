@@ -3,8 +3,6 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask import session
 
-import session_data
-
 db = SQLAlchemy()
 
 
@@ -65,17 +63,10 @@ def create_app() -> Flask:
     def internal_error(error):
         return error.get_response(), 500
 
-    @app.before_request
-    def before_request():
-        if len(session.keys()) == 0:
-            for k, v in session_data.default_session_data().items():
-                session.setdefault(k, v)
-
     # Injecting conversations list to every template so it doesn't have to be manually passed
-    from webapp.models import ConversationModel
-
     @app.context_processor
     def inject_conversations():
+        from webapp.models import ConversationModel
         conversations = ConversationModel.query.all()
         return dict(conversations=conversations)
 

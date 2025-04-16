@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Settings {% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/config.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for("webapp.static",filename="styles/config.css") }}"/>
 {% endblock %}
 
 {% block content %}
@@ -13,16 +13,17 @@
             <p>(Click on a configuration to navigate to a new conversation with this config)</p>
             <div class="config-list">
                 {% for config in configs %}
-                    <a class="no-decor" href="{{ url_for("webapp.chat.new",config_id=config.id) }}">
+                    <a href="{{ url_for("webapp.chat.new",config_id=config.id) }}">
                         <div class="config-item">
-                            <div class="flex-row space-between flex-content-center">
+                            <div class="config-header">
                                 <span><strong>{{ config.name }}</strong></span>
                                 {% if not config.is_default %}
+                                    {# form cuz anchor in anchor doesn't work' #}
                                     <form action="{{ url_for("webapp.cfg.delete",cfg_id=config.id) }}">
-                                        <button type="submit" class="btn">
-
-                                            <img src="{{ url_for("webapp.static",filename="icons/trashcan.svg") }}" alt=""
-                                                 width="16" height="16">
+                                        <button type="submit"
+                                                class="btn btn-icon primary md bg-none flex-row flex-content-center">
+                                            <img src="{{ url_for("webapp.static",filename="icons/trashcan.svg") }}"
+                                                 alt=""/>
                                         </button>
                                     </form>
                                 {% endif %}
@@ -39,7 +40,7 @@
             </div>
         </div>
         <a href="{{ url_for("webapp.cfg.create") }}">
-            <div class="btn">
+            <div class="btn primary">
                 Create new
             </div>
         </a>

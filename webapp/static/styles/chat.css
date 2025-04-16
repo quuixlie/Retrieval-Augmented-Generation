@@ -43,172 +43,119 @@
 
 .chat-container .left {
     align-self: flex-start;
+
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+
+    border-bottom-left-radius: 0.4vh;
 }
 
 .chat-container .right {
     align-self: flex-end;
-    background-color: #303030;
+    background-color: var(--color-secondary);
+    color: var(--color-on-secondary);
     border-bottom-right-radius: 0.4vh;
 }
 
-/* Chat input container */
 .chat-input-container {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
 
     width: 100%;
 
-    border-radius: 9px;
     padding: 12px 20px;
 
-    box-shadow: 0px 1px 1px rgba(3, 7, 18, 0.02),
-      0px 5px 4px rgba(3, 7, 18, 0.03),
-      0px 12px 9px rgba(3, 7, 18, 0.05),
-      0px 20px 15px rgba(3, 7, 18, 0.06),
-      0px 32px 24px rgba(3, 7, 18, 0.08);
+    box-shadow: 0 1px 1px rgba(3, 7, 18, 0.02),
+    0 5px 4px rgba(3, 7, 18, 0.03),
+    0 12px 9px rgba(3, 7, 18, 0.05),
+    0 20px 15px rgba(3, 7, 18, 0.06),
+    0 32px 24px rgba(3, 7, 18, 0.08);
 
-    background-color: #303030;
+    border-radius: var(--corner-radius-large);
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
 
     gap: 12px;
 }
 
 
-.chat-input-area {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-
-    flex: 1;
-    gap: 12px;
+.chat-input {
+    border-radius: var(--corner-radius-large);
+    flex-grow: 1;
 }
-
-.chat-input-area > button {
-    font-size: 18px;
-    border-radius: 9px;
-}
-
-.chat-input-area textarea {
-    flex: 1;
-    padding: 12px;
-    border-radius: 0.8vh;
-    background-color: #303030;
-    border: 2px solid #3d3d3d;
-    color: #e0e0e0;
-    resize: none;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.chat-input-area textarea:focus {
-    border-color: #676767;
-}
-
-.chat-input-area button {
-    padding: 10px 20px 10px 20px;
-    border: none;
-    border-radius: 0.8vh;
-    background-color: #676767;
-    color: white;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.chat-input-area button:hover {
-    background-color: #707070;
-}
-
 
 .chat-document {
-    display: flex !important;
+    display: flex;
     flex-direction: row;
     align-items: center;
     cursor: default;
     gap: 10px;
+    padding: 10px;
 }
 
 .chat-config-item {
     display: flex;
     flex-direction: row;
     align-items: center;
+    padding: 10px;
     gap: 10px;
+
+    border-radius: var(--corner-radius-large);
+    color: var(--color-on-secondary);
+    background-color: var(--color-secondary);
 }
 
-.chat-config-item span {
+.chat-config-item:hover {
+    background-color: var(--color-surface-variant);
+}
 
+.chat-config-item > span {
     flex: 1;
 }
 
+.chat-config-button {
+    position: absolute;
+    left: 20px;
+    top: 12px;
 
-.chat-expand-button {
+    border-radius: var(--corner-radius-large);
+    background-color: var(--color-secondary);
+    color: var(--color-on-secondary);
+}
+
+.checkbox-menu-container {
     position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+}
+
+input[type="checkbox"] + .checkbox-menu {
+    display: none;
+
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+
+    border-radius: var(--corner-radius-large);
+    padding: 10px;
+
     gap: 5px;
 }
 
-.chat-expand-button > *:nth-child(2) {
-    display: inline-block;
-    max-width: 0;
-
-    overflow: hidden;
-    text-overflow: clip;
-    white-space: nowrap;
-
-    font-size: 1em;
-    color: #e0e0e0;
-
-    transition: max-width 1s ease-out;
-}
-
-.chat-expand-button:hover > *:nth-child(2) {
-    max-width: 180px;
-}
-
-
-.chat-expand-button:hover .chat-expand-btn-items {
-    max-height: 250px;
-    overflow-y: scroll;
-}
-
-.chat-expand-btn-items {
-
-    display: inline-block;
-
+input[type="checkbox"]:checked + .checkbox-menu {
+    display: flex;
     position: absolute;
     bottom: 100%;
-    left: 0;
-    max-height: 0;
+    left: 50%;
 
-    z-index: 1;
-
-    background-color: #1f1f1f;
-    border-radius: 0.8vh;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-    transition: max-height 0.15s ease-out;
+    transform: translateX(-50%);
 
 }
 
-.chat-expand-btn-items > * {
-    display: block;
-    padding: 10px;
-    border-bottom: 1px solid #333;
-    width: 400px;
+.checkbox-menu-item {
+    padding: 8px;
+    border-radius: var(--corner-radius-large);
 }
 
-.chat-expand-btn-items * {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.checkbox-menu-item:hover {
+    background-color: var(--color-surface-variant);
 }
-
-
 
 

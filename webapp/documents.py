@@ -21,18 +21,7 @@ def upload(conversation_id: int):
 
     files = request.files.getlist("files")
 
-    for file in files:
-        document = DocumentModel(conversation_id=conversation_id, name=file.filename)
-
-        try:
-            db.session.add(document)
-            db.session.commit()
-        except Exception as e:
-            print(e)
-            return jsonify({"error": "Unknown error occurred"}), 500
-
     url = AppConfig.API_BASE_URL + url_for("api.upload_documents", conversation_id=conversation_id)
-
     config_dict = conversation.active_config.get_values_dict()
 
     multipart_data = [("files", (file.filename, file, "application/pdf")) for file in files]
@@ -47,6 +36,16 @@ def upload(conversation_id: int):
 
         if ragJSON.get("error", None):
             return jsonify({"error": ragJSON.get("error")})
+
+        # Uploading files to the database only on success rag response
+        for file in files:
+            document = DocumentModel(conversation_id=conversation_id, name=file.filename)
+            try:
+                db.session.add(document)
+                db.session.commit()
+            except Exception as e:
+                print(e)
+                return jsonify({"error": "Unknown error occurred"}), 500
 
         conv_docs = DocumentModel.query.filter(DocumentModel.conversation_id == conversation_id).all()
 

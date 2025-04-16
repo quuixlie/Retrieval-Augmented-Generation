@@ -6,13 +6,14 @@ Requires the styles.css file
     <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/navBar.css') }}"/> {% endblock %}
 {% set navTabs = [{"name":"Configurations","route":"cfg.index"}] %}
 
-<script src="{{ url_for("webapp.static",filename="scripts/navbarHandler.js") }}" defer></script>
+<script src="{{ url_for('webapp.static',filename='scripts/navbarHandler.js') }}" defer></script>
 
 <div class="nav-wrapper">
     <nav id="navBar" class="nav-container">
         <div id="insideButtonsContainer">
             <a id="newChatButton" href="{{ url_for('webapp.chat.new') }}"
-               class="btn new-chat-btn no-decor">+
+               class="btn btn-icon lg primary no-decor right"><img
+                    src="{{ url_for("webapp.static", filename="icons/new_chat.svg") }}" alt="New Chat"/>
             </a>
         </div>
         <ul>
@@ -27,12 +28,12 @@ Requires the styles.css file
         <div class="chat-history">
             <ul id="chatList">
                 {% for conv in conversations %}
-                    <li class="flex-row nav-item {{ " active
-            " if request.endpoint == 'webapp.chat.index' and conversation_id == conv.id else "" }}">
+                    <li class="nav-item flex-row {{ 'active' if request.endpoint == 'webapp.chat.index' and conversation_id == conv.id else '' }}">
                         {# Make sure this link goes somewhere, e.g., /chat/{{ chat.id }} #}
                         <a class="flex-1"
                            href="{{ url_for('webapp.chat.index',conversation_id=conv.id) }}">{{ conv.title }}</a>
-                        <button class="btn-icon" data-conversation-id="{{ conv.id }}" onclick="toggleMenu(event)">
+                        <button class="btn btn-icon md hidden bg-none" data-conversation-id="{{ conv.id }}"
+                                onclick="toggleMenu(event)">
                             <img src="{{ url_for('webapp.static',filename='icons/view_more.svg') }}"
                                  aria-label="Expand submenu"
                                  alt="" width="16" height="16">
@@ -44,17 +45,19 @@ Requires the styles.css file
 
         {# --- Context Menu for Conversations --- #}
         <div id="conversationContextMenu" class="conversation-context-menu">
-            <button class="btn-icon conversation-context-entry delete"
-                    onclick="deleteConversation('{{ url_for("webapp.chat.delete",id=-1) }}',{{ conversation_id if conversation_id is defined else "null" }},'{{ url_for("webapp.cfg.index") }}')">
+            <button class="conversation-context-entry"
+                    onclick="deleteConversation('{{ url_for('webapp.chat.delete',id=-1) }}',{{ conversation_id if conversation_id is defined else "null" }},'{{ url_for("webapp.cfg.index") }}')">
                 <span>Delete </span>
-                <img src="{{ url_for('webapp.static',filename="icons/trashcan.svg") }}" aria-label="Delete conversation"
+                <img src="{{ url_for('webapp.static',filename="icons/trashcan.svg") }}"
+                     aria-label="Delete conversation"
                      alt="" width="16" height="16">
             </button>
         </div>
     </nav>
 
     <div id="outsideButtonsContainer">
-        <label class="btn toggle-btn">
+        <label class="btn btn-icon lg primary toggle-open">
+            <span></span>
             <input class="hidden" type="checkbox" id="toggleNav">
         </label>
     </div>
