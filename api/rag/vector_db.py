@@ -101,19 +101,22 @@ class VectorDB:
         try:
             results = self.client.search(collection_name, anns_field="embedding", data=query_embedding,
                                          search_params=search_params,
-                                         limit=11, output_fields=["text"])
+                                         limit=25, output_fields=["text"])
         finally:
             self.client.release_collection(collection_name)
 
         return results
 
-    def rerank(self, results: list, query: str, top_k: int = 4) -> list:
+    def rerank(self, results: list, query: str, top_k: int = 5) -> list:
         """
         Rerank the results based on the query embedding.
         """
         # Rerank the results based on the query embedding
         initial_docs = [result['entity']['text'] for result in results[0]]
         reranked_results = self.reranker(query, initial_docs)
+
+        if len(results[0]) < top_k:
+            top_k = len(results[0])
 
         output = []
         for i in range(top_k):
