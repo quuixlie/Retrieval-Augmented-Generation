@@ -1,15 +1,12 @@
 import requests
-import os
-from uuid import UUID
 
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, json
-from werkzeug.utils import secure_filename
 
-from app import db
-from webapp.models import ConversationModel, DocumentModel
-from appconfig import AppConfig
+from extensions import db
+from app_config import AppConfig
+from .models import ConversationModel, DocumentModel
 
-documents_bp = Blueprint("documents", __name__)
+documents_bp = Blueprint("documents", __name__, static_folder="static", template_folder="templates")
 
 
 @documents_bp.route('/upload/<int:conversation_id>', methods=["POST"])
@@ -21,7 +18,7 @@ def upload(conversation_id: int):
 
     files = request.files.getlist("files")
 
-    url = AppConfig.API_BASE_URL + url_for("api.upload_documents", conversation_id=conversation_id)
+    url = f"{AppConfig.API_BASE_URL}/upload/{conversation_id}"
     config_dict = conversation.active_config.get_values_dict()
 
     multipart_data = [("files", (file.filename, file, "application/pdf")) for file in files]
@@ -59,4 +56,4 @@ def upload(conversation_id: int):
 @documents_bp.route('/delete', methods=["POST"])
 def delete():
     # TODO :: Delete the document from the db
-    return redirect(url_for("webapp.documents.index", success=False, msg="NOT IMPLEMENTED"))
+    return redirect(url_for(".index", success=False, msg="NOT IMPLEMENTED"))

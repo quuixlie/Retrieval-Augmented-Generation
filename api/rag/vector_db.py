@@ -1,14 +1,14 @@
-from pymilvus import MilvusClient, DataType, CollectionSchema, Collection, connections
+from pymilvus import MilvusClient, DataType, CollectionSchema
 from pymilvus.model.reranker import BGERerankFunction
 import torch
 
 
 class VectorDB:
     def __init__(self):
-        from appconfig import AppConfig
+        from api_config import ApiConfig
 
         self.client = MilvusClient(
-            uri=AppConfig.MILVUS_URL,
+            uri=ApiConfig.DB_URL,
             token="root:Milvus"
         )
 

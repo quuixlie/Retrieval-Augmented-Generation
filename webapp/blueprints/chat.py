@@ -1,11 +1,11 @@
 import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
-from app import db
-from appconfig import AppConfig
+from extensions import db
+from app_config import AppConfig
 from .models import ChatMessageModel, ConversationModel, DocumentModel, ConfigModel
 
-chat_bp = Blueprint("chat", __name__)
+chat_bp = Blueprint("chat", __name__, static_folder="static", template_folder="templates")
 
 
 @chat_bp.route('/<int:conversation_id>', methods=["GET"])
@@ -22,6 +22,7 @@ def index(conversation_id: int):
     conversation = ConversationModel.query.filter(ConversationModel.id == conversation_id).first()
 
     if not conversation:
+        print("conversation doesn't exist")
         return redirect(url_for('.new'))
 
     messages = ChatMessageModel.query.filter(ChatMessageModel.conversation_id == conversation_id).all()
@@ -64,8 +65,6 @@ def new():
     new_conversation.title = "Conversation " + str(new_conversation.id)
     db.session.commit()
 
-    print(f"Created new conversation with id: {new_conversation.id}")
-
     return redirect(url_for('.index', conversation_id=new_conversation.id))
 
 
@@ -100,7 +99,6 @@ def delete(id: int):
     Deletes the conversation with given id
     """
 
-    print("lala")
     # TODO :: Return meaningful errors
 
     if not id:
@@ -111,7 +109,7 @@ def delete(id: int):
         print(f"Conversation {id} does not exist - cannot delete it")
         return "", 400
 
-    url = AppConfig.API_BASE_URL + url_for("api.delete_collection", conversation_id=id)
+    url = f"{AppConfig.API_BASE_URL}/delete_collection/{id}"
     response = requests.delete(url)
 
     try:
@@ -155,7 +153,7 @@ def send(conversation_id: int):
     if not message:
         return jsonify({"error": "Message not provided"}), 400
 
-    url = AppConfig.API_BASE_URL + url_for("api.index", conversation_id=conversation_id)
+    url = f"{AppConfig.API_BASE_URL}/query/{conversation_id}"
     config_dict = conversation.active_config.get_values_dict()
 
     response = requests.post(url, json={"query": message, "config": config_dict})

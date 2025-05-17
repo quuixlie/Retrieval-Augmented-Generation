@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Chat{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('chat.static',filename='styles/chat.css') }}"/> {% endblock %}
+{% block content %}
+
+    <div class="chat-config-button dropdown">
+        <div class="dropdown-button chat-config-item">
+            <img src="{{ url_for('static',filename='icons/cogwheel.svg') }}" alt="cogwheel" width="30"
+                 height="30"/>
+            <span class="flex-1"><strong>{{ active_configuration.name }}</strong></span>
+        </div>
+        <div class="dropdown-menu down" style="max-width:35vw;">
+            {% for config in other_configurations %}
+                <a class="chat-config-item"
+                   href="{{ url_for("chat.change_config",conversation_id=conversation_id,config_id=config.id) }}">
+                    <img src="{{ url_for('static',filename='icons/cogwheel.svg') }}" alt="cogwheel"
+                         width="24" height="24"/>
+                    <span>{{ config.name }}</span>
+                </a>
+            {% endfor %}
+            <a style="color:var(--color-on-primary)" class="chat-config-item" href="{{ url_for("cfg.create") }}">
+                <div>Create new configuration</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="chat-wrapper">
+        <div class="chat-container">
+            {% for message in messages %}
+                <div class="message right">
+                    {{ message.message }}
+                </div>
+                {% if message.response is not none %}
+                    <div class="message left">
+                        {{ message.response }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <form class="chat-input-container" id="chatForm"
+              action="{{ url_for("chat.send",conversation_id=conversation_id) }}">
+            <label class="btn primary dropdown">
+                <img class="icon extra-large dropdown-button" src="{{ url_for('static',filename='icons/add_file.svg') }}" alt="File">
+                <div class="dropdown-menu up" id="documentList">
+                    {% include "chat_file_list.html" %}
+                </div>
+                <input class=" hidden" id="documentInput" type="file" accept="application/pdf"
+                       data-url="{{ url_for('documents.upload', conversation_id=conversation_id) }}" multiple>
+            </label>
+            <textarea class="chat-input text-input" placeholder="Type your message here" required></textarea>
+            <button class="btn primary" type="submit"><span class="icon extra-large">⮞</span></button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('chat.static', filename='scripts/chatHandler.js') }}"></script>
+{% endblock %}

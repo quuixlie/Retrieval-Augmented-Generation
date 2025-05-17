@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from sqlalchemy import inspect, event
-from app import db
+from extensions import db
 
 
 class ConfigModel(db.Model):
@@ -28,7 +29,6 @@ class ConfigModel(db.Model):
     """Name of the model"""
     model_name = db.Column(db.String, nullable=False)
     chunk_size = db.Column(db.Integer, nullable=False)
-    document_count = db.Column(db.Integer, nullable=False)
 
     @staticmethod
     def get_all() -> list[ConfigModel]:
@@ -54,8 +54,8 @@ class ConfigModel(db.Model):
         return default
 
     @staticmethod
-    def exists(id: int) -> bool:
-        return ConfigModel.query.filter_by(id=id).first() is not None
+    def exists(config_id: int) -> bool:
+        return ConfigModel.query.filter_by(id=config_id).first() is not None
 
     def get_values_dict(self) -> dict[str, any]:
         """
@@ -73,7 +73,7 @@ class ConfigModel(db.Model):
 
 # Ensuring default configuration is not deleted
 @event.listens_for(ConfigModel, "before_delete")
-def prevent_default_config_deletion(mapper, connection, target: ConfigModel):
+def prevent_default_config_deletion(_, __, target: ConfigModel):
     if target.is_default:
         raise Exception("Cannot delete default configuration")
 
@@ -100,9 +100,9 @@ class ConversationModel(db.Model):
         return f"Conversation(id={self.id}, title={self.title},active_config_id={self.active_config_i}"
 
     @staticmethod
-    def exists(id: int) -> bool:
+    def exists(conversation_id: int) -> bool:
         """Returns true if conversation with given id exists"""
-        return ConversationModel.query.filter_by(id=id).first() is not None
+        return ConversationModel.query.filter_by(id=conversation_id).first() is not None
 
 
 class ChatMessageModel(db.Model):

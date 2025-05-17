@@ -43,9 +43,9 @@
                    required>
             <div class="file-input-list" id="fileNames"></div>
             <div class="flex-row">
-                <input type="submit" formaction="{{ url_for("webapp.documents.upload") }}" value="Add documents"
+                <input type="submit" formaction="{{ url_for("documents.upload") }}" value="Add documents"
                        class="btn">
-                <input type="submit" formaction="{{ url_for("webapp.documents.delete") }}" value="Delete All documents"
+                <input type="submit" formaction="{{ url_for("documents.delete") }}" value="Delete All documents"
                        class="btn">
             </div>
         </form>

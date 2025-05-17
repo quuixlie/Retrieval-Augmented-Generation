@@ -27,6 +27,7 @@ function setSidebarState(isOpen) {
     }
 }
 
+document.getElementsByClassName('nav-container')[0].classList.add("notransition")
 // Setting initial state
 if (savedState === 'open') {
     toggleNavCheckbox.checked = true;
@@ -36,20 +37,17 @@ if (savedState === 'open') {
     setSidebarState(false);
 }
 
+document.getElementById('outsideButtonsContainer').classList.remove('hidden');
 setTimeout(() => {
-    document.getElementsByClassName('nav-container')[0].style.transition = 'width 0.2s ease-out';
+    document.getElementsByClassName('nav-container')[0].classList.remove("notransition");
 }, 50);
-
 
 toggleNavCheckbox.addEventListener('change', function () {
     const isOpen = toggleNavCheckbox.checked;
     setSidebarState(isOpen);
 });
 newChatButton.addEventListener('click', function (e) {
-    e.preventDefault()
-    const link = e.target.href;
     setSidebarState(true)
-    window.location.href = link;
 })
 
 
@@ -59,11 +57,8 @@ let contextMenu = null;
 let selectedButton = null;
 let selectedConversationId = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    contextMenu = document.getElementById("conversationContextMenu")
-    // Hiding menu when user clicks somewhere
-    document.addEventListener("click", hideMenu);
-})
+contextMenu = document.getElementById("conversationContextMenu")
+document.addEventListener("click", hideMenu);
 
 function showMenu(x, y) {
     if (contextMenu) {

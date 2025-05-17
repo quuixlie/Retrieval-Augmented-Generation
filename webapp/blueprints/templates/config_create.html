@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Settings {% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/config.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('cfg.static',filename='styles/config.css') }}"/>
 {% endblock %}
 
 {% block content %}
     <div class="config-wrapper">
         <h1>Retrieval Augmented Generation</h1>
         <h2>Create config</h2>
-        <form id="creationForm" action="{{ url_for("webapp.cfg.create") }}" class="flex-col" method="post">
+        <form id="creationForm" action="{{ url_for("cfg.create") }}" class="flex-col" method="post">
             <label class="text-input-container size-min-content">
                 <input class="text-input" type="text" name="name" placeholder="Type config name here" required>
             </label>
@@ -24,12 +24,14 @@
                 Chunk size
                 <input class="text-input" type="number" name="chunkSize" placeholder="Type Chunk size here" required>
             </label>
+        {# ??
             <label class="text-input-container size-min-content">
                 Document count
                 <input class="text-input" type="number" name="documentCount" placeholder="Type Document count here"
                        required>
             </label>
-            <input type="submit" class="btn primary " value="Send"/>
+        #}
+            <input type="submit" class="btn primary font-medium" value="Create"/>
         </form>
     </div>
 

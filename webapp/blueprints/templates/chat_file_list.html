@@ -6,7 +6,7 @@
 {% if attached_documents | length > 0 %}
     {% for file in attached_documents %}
         <div class="chat-document">
-            <img src="{{ url_for("webapp.static",filename="icons/file.svg") }}" width="32" height="32"
+            <img src="{{ url_for("static",filename="icons/file.svg") }}" width="32" height="32"
                  alt=""/>
             <span>{{ file.name }}</span>
         </div>

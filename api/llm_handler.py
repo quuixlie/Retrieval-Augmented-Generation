@@ -1,13 +1,11 @@
-import os
-from dotenv import load_dotenv
 import requests
 
-from appconfig import AppConfig
+from api_config import ApiConfig
 
 
 def llm(endpoint: str, prompt: str):
     headers = {
-        'Authorization': f'Bearer {AppConfig.OPENROUTER_API_KEY}',
+        'Authorization': f'Bearer {ApiConfig.OPENROUTER_API_KEY}',
         'Content-Type': 'application/json',
     }
     payload = {

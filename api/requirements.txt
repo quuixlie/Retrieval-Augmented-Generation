@@ -1,0 +1,9 @@
+fastapi==0.115.12
+pydantic==2.11.3
+pymilvus==2.5.7
+pymilvus_model==0.3.2
+pymupdf==1.25.5
+pymupdf4llm==0.0.21
+Requests==2.32.3
+sentence_transformers==4.1.0
+torch==2.7.0

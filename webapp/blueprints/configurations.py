@@ -1,10 +1,10 @@
 from flask import render_template, redirect, url_for, request, Blueprint
 
-from app import db
-from appconfig import AppConfig
-from webapp.models import ConfigModel
+from extensions import db
+from app_config import AppConfig
+from .models import ConfigModel
 
-cfg_bp = Blueprint("cfg", __name__)
+cfg_bp = Blueprint("cfg", __name__,static_folder="static", template_folder="templates")
 
 
 @cfg_bp.route('/', methods=["GET"])
@@ -54,19 +54,18 @@ def create():
     config_name = request.form.get("name", None)
     model_id: str = request.form.get("model_id", None)
     chunk_size = request.form.get("chunkSize", type=int)
-    document_count = request.form.get("documentCount", type=int)
 
     selected_model = next((x for x in AppConfig.AVAILABLE_MODELS if x["id"] == model_id), None)
 
     if selected_model is None:
         return redirect(url_for(".index", err="Couldn't find selected model."))
 
-    if any([True if field is None else False for field in [config_name, chunk_size, document_count]]):
+    if any([(True if field is None else False) for field in [config_name, chunk_size]]):
         return redirect(url_for(".index", err="All fields must be filled out."))
 
     print(selected_model)
     new_config = ConfigModel(name=config_name, model_id=selected_model['id'], model_name=selected_model['name'],
-                             chunk_size=chunk_size, document_count=document_count)
+                             chunk_size=chunk_size)
     db.session.add(new_config)
     db.session.commit()
 

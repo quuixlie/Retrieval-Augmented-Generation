@@ -1,86 +1,109 @@
-from flask import Blueprint, jsonify, request, json
-from .rag import rag
-from webapp.llm_handler import llm, create_prompt, format_relevant_documents, format_response
+from typing import Annotated
+from fastapi import APIRouter, HTTPException, File, UploadFile
+from pydantic import BaseModel
+import json
 
-api_bp = Blueprint("api", __name__)
+import rag.rag as rag
+import llm_handler as llm
+from api_config import ApiConfig
+
+api_router = APIRouter()
 
 
-@api_bp.route('/query/<int:conversation_id>', methods=["POST"])
-def index(conversation_id: int):
+@api_router.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+@api_router.get('/available_models')
+def available_models():
+    return {"models": ApiConfig.AVAILABLE_MODELS}
+
+
+class QueryModel(BaseModel):
+    query: str | None = None
+    config: dict | None = None
+
+
+@api_router.post('/query/{conversation_id}')
+async def index(conversation_id: int, parameters: QueryModel):
     """
     Query the RAG API
     :return: JSON with RAG response at key "message" or error at key "error"
     """
 
-    query = request.json.get("query", None)
-    config = request.json.get("config", None)
+    query = parameters.query
+    config = parameters.config
     print("Query: ", query)
     print("Query config:", config)
 
     if not query:
-        return jsonify({"error": "Query not provided"}), 400
+        raise HTTPException(status_code=400, detail={"error": "Query not provided"})
 
     if not config:
-        return jsonify({"error": "Config not provided"}), 400
+        raise HTTPException(status_code=400, detail={"error": "Config not provided"})
 
     if not rag.can_process_query(conversation_id):
-        return jsonify({"error": "No documents uploaded"}), 400
+        raise HTTPException(status_code=400, detail={"error": "No documents uploaded"})
 
     # Get relevant documents and create prompt
     relevant_documents = rag.process_query(conversation_id, query)
-    relevant_documents_formatted = format_relevant_documents(relevant_documents)
-    prompt = create_prompt(query, relevant_documents_formatted)
+    relevant_documents_formatted = llm.format_relevant_documents(relevant_documents)
+    prompt = llm.create_prompt(query, relevant_documents_formatted)
 
     # Send it to the LLM and get the response
     model_endpoint = config['model_id']
-    if (model_endpoint != "localhost"):
-        response = llm(model_endpoint, prompt)
+    if model_endpoint != "localhost":
+        response = llm.llm(model_endpoint, prompt)
+
+        if "error" in response:
+            return HTTPException(status_code=500, detail={"error": response["error"]})
+
     else:
         response = "Local LLM not supported yet"
 
     # Format the response
-    response = format_response(response, relevant_documents_formatted)
+    response = llm.format_response(response, relevant_documents_formatted)
 
-    return jsonify({"message": f"{response}"}), 200
+    return {"message": response}
 
 
 #
-@api_bp.route('/upload/<int:conversation_id>', methods=["POST"])
-def upload_documents(conversation_id: int):
+@api_router.post('/upload/{conversation_id}')
+async def upload_documents(conversation_id: int, files: Annotated[list[UploadFile], []],
+                           config: Annotated[UploadFile, File()]):
     """
     Uploads files to RAG
+    :param files:
+    :param config:
     :param conversation_id: ID of the conversation
     :return: JSON with error at key "error" or success message at key "message"
     """
 
-    files = request.files.getlist("files")
-    config = request.files.get("config", None)
-
     if config:
-        config = json.loads(config.read())
+        content = config.file.read()
+        config = json.loads(content)
 
     print("Upload files: ", files)
     print("Upload files config: ", config)
 
     if not files:
-        return jsonify({"error": "No files provided"}), 400
+        raise HTTPException(status_code=400, detail={"error": "No files provided"})
+
 
     for file in files:
-        rag.process_document(conversation_id, file)
+        rag.process_document(conversation_id, file.file)
 
-    return jsonify({"message": "Files uploaded"}), 200
+    return {"message": "Files uploaded"}
 
 
-@api_bp.route('/delete/<int:conversation_id>', methods=["DELETE"])
+@api_router.delete('/delete/{conversation_id}')
 def delete_collection(conversation_id: int):
     """
     Deletes the collection with given id
     :param conversation_id: ID of the conversation
     :return: JSON with error at key "error" or success message at key "message"
     """
-
     db = rag.vector_db.VectorDB()
     db.remove_collection(conversation_id)
-
-
-    return jsonify({"message": "Collection deleted"}), 200
+    return {"message": "Collection deleted"}

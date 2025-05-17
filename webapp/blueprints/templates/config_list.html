@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Settings {% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for("webapp.static",filename="styles/config.css") }}"/>
+    <link rel="stylesheet" href="{{ url_for("cfg.static",filename="styles/config.css") }}"/>
 {% endblock %}
 
 {% block content %}
@@ -13,16 +13,16 @@
             <p>(Click on a configuration to navigate to a new conversation with this config)</p>
             <div class="config-list">
                 {% for config in configs %}
-                    <a href="{{ url_for("webapp.chat.new",config_id=config.id) }}">
+                    <a href="{{ url_for("chat.new",config_id=config.id) }}">
                         <div class="config-item">
                             <div class="config-header">
                                 <span><strong>{{ config.name }}</strong></span>
                                 {% if not config.is_default %}
                                     {# form cuz anchor in anchor doesn't work' #}
-                                    <form action="{{ url_for("webapp.cfg.delete",cfg_id=config.id) }}">
+                                    <form action="{{ url_for("cfg.delete",cfg_id=config.id) }}">
                                         <button type="submit"
-                                                class="btn btn-icon primary md bg-none flex-row flex-content-center">
-                                            <img src="{{ url_for("webapp.static",filename="icons/trashcan.svg") }}"
+                                                class="btn primary md bg-none flex-row flex-content-center">
+                                            <img class="icon medium" src="{{ url_for("static",filename="icons/trashcan.svg") }}"
                                                  alt=""/>
                                         </button>
                                     </form>
@@ -32,15 +32,14 @@
                                 <p>Model id: {{ config.model_id }}</p>
                                 <p>Model name: {{ config.model_name }}</p>
                                 <p>Chunk Size: {{ config.chunk_size }}</p>
-                                <p>Document Count: {{ config.document_count }}</p>
                             </div>
                         </div>
                     </a>
                 {% endfor %}
             </div>
         </div>
-        <a href="{{ url_for("webapp.cfg.create") }}">
-            <div class="btn primary">
+        <a href="{{ url_for("cfg.create") }}">
+            <div class="btn primary nowrap">
                 Create new
             </div>
         </a>

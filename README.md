@@ -4,7 +4,7 @@
 
 1. Make sure you have ```docker-compose``` installed.
 2. Make sure docker service is running.
-3. Create a copy of ```.env.template``` called ```.env```
+3. Create a copy of ```.env.docker.template``` called ```.env```
 4. Fill all the environment variables in newly created ```.env``` file
 5. In the root directory run ```docker-compose up --build``` (on linux it may require sudo)
 

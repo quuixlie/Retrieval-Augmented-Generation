@@ -1,0 +1,8 @@
+Dockerfile
+instance/
+.gitignore
+.venv
+venv
+Dockerfile
+__pycache__
+

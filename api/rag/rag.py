@@ -1,12 +1,13 @@
 from pymupdf import Document
-from werkzeug.datastructures import FileStorage
+from fastapi import UploadFile
 from sentence_transformers import SentenceTransformer
 import torch
 from multiprocessing import Pool, cpu_count
 # from fast_sentence_transformers import FastSentenceTransformer as SentenceTransformer # https://www.philschmid.de/optimize-sentence-transformers
 import pymupdf4llm
-from . import vector_db
 import os
+
+from api import db
 
 
 # https://github.com/huggingface/transformers/issues/5486
@@ -19,10 +20,9 @@ model = SentenceTransformer("sentence-transformers/all-MiniLM-L12-v2", device=de
     "torch_dtype": torch.float16,
 })
 
-db = vector_db.VectorDB()
 
 
-def process_document(conversation_id: int, document: FileStorage):
+def process_document(conversation_id: int, document: UploadFile):
     """
     Process the document to extract relevant information.
     """
@@ -40,7 +40,7 @@ def process_document(conversation_id: int, document: FileStorage):
     db.insert_data(conversation_id, data)
 
 
-def __divide_document_into_fragments(document: FileStorage):
+def __divide_document_into_fragments(document: UploadFile):
     """
     Divide the document into fragments for embedding. Use multiprocessing to speed up the process.
     """

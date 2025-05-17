@@ -3,23 +3,22 @@ Map of navigation items -> its "route" within webapp blueprint
 Requires the styles.css file
 #}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('webapp.static',filename='styles/navBar.css') }}"/> {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/navBar.css') }}"/> {% endblock %}
 {% set navTabs = [{"name":"Configurations","route":"cfg.index"}] %}
-
-<script src="{{ url_for('webapp.static',filename='scripts/navbarHandler.js') }}" defer></script>
 
 <div class="nav-wrapper">
     <nav id="navBar" class="nav-container">
-        <div id="insideButtonsContainer">
-            <a id="newChatButton" href="{{ url_for('webapp.chat.new') }}"
-               class="btn btn-icon lg primary no-decor right"><img
-                    src="{{ url_for("webapp.static", filename="icons/new_chat.svg") }}" alt="New Chat"/>
+        <div id="insideButtonsContainer" class="inside-buttons-container">
+            <a id="newChatButton" href="{{ url_for('chat.new') }}"
+               class="btn primary no-decor">
+                <img class="icon medium"
+                     src="{{ url_for("static", filename="icons/new_chat.svg") }}" alt="New Chat"/>
             </a>
         </div>
         <ul>
             {% for tab in navTabs %}
-                <li class="nav-item {{ 'active' if request.endpoint == ('webapp.' + tab['route']) else '' }}">
-                    <a href="{{ url_for('webapp.' + tab['route']) }}">
+                <li class="nav-item {{ 'active' if request.endpoint == (tab['route']) else '' }}">
+                    <a href="{{ url_for(tab['route']) }}">
                         <div>{{ tab["name"] }}</div>
                     </a>
                 </li>
@@ -28,15 +27,15 @@ Requires the styles.css file
         <div class="chat-history">
             <ul id="chatList">
                 {% for conv in conversations %}
-                    <li class="nav-item flex-row {{ 'active' if request.endpoint == 'webapp.chat.index' and conversation_id == conv.id else '' }}">
+                    <li class="nav-item{{ ' active' if request.endpoint == 'chat.index' and conversation_id == conv.id else '' }}">
                         {# Make sure this link goes somewhere, e.g., /chat/{{ chat.id }} #}
-                        <a class="flex-1"
-                           href="{{ url_for('webapp.chat.index',conversation_id=conv.id) }}">{{ conv.title }}</a>
-                        <button class="btn btn-icon md hidden bg-none" data-conversation-id="{{ conv.id }}"
+                        <a href="{{ url_for('chat.index',conversation_id=conv.id) }}">{{ conv.title }}</a>
+                        <button class="btn hidden bg-none" data-conversation-id="{{ conv.id }}"
                                 onclick="toggleMenu(event)">
-                            <img src="{{ url_for('webapp.static',filename='icons/view_more.svg') }}"
+                            <img class="icon small"
+                                    src="{{ url_for('static',filename='icons/view_more.svg') }}"
                                  aria-label="Expand submenu"
-                                 alt="" width="16" height="16">
+                                 alt="">
                         </button>
                     </li>
                 {% endfor %}
@@ -46,19 +45,19 @@ Requires the styles.css file
         {# --- Context Menu for Conversations --- #}
         <div id="conversationContextMenu" class="conversation-context-menu">
             <button class="conversation-context-entry"
-                    onclick="deleteConversation('{{ url_for('webapp.chat.delete',id=-1) }}',{{ conversation_id if conversation_id is defined else "null" }},'{{ url_for("webapp.cfg.index") }}')">
+                    onclick="deleteConversation('{{ url_for('chat.delete',id=-1) }}',{{ conversation_id if conversation_id is defined else "null" }},'{{ url_for("cfg.index") }}')">
                 <span>Delete </span>
-                <img src="{{ url_for('webapp.static',filename="icons/trashcan.svg") }}"
-                     aria-label="Delete conversation"
-                     alt="" width="16" height="16">
+                <img src="{{ url_for('static',filename="icons/trashcan.svg") }}" aria-label="Delete conversation"
+                     alt="">
             </button>
         </div>
     </nav>
 
-    <div id="outsideButtonsContainer">
-        <label class="btn btn-icon lg primary toggle-open">
-            <span></span>
+    <div id="outsideButtonsContainer" class="outside-buttons-container hidden">
+        <label class="btn primary toggle-open">
+            <span class="icon medium"></span>
             <input class="hidden" type="checkbox" id="toggleNav">
         </label>
     </div>
 </div>
+<script src="{{ url_for('static',filename='scripts/navbarHandler.js') }}"></script>

@@ -1,5 +1,4 @@
 
-
 .config-wrapper {
     display: flex;
     flex-direction: column;
@@ -38,9 +37,10 @@
 #creationForm {
     display: flex;
     flex-direction: column;
+
     gap: 2vh;
 
-    width: 100%;
+    margin-inline: auto;
 
     overflow-y: auto;
     scroll-behavior: smooth;
@@ -71,7 +71,7 @@
     background-color: var(--color-surface);
     color: var(--color-on-surface);
 
-    max-width:50vw;
+    max-width: 50vw;
 }
 
 .config-item span {
@@ -87,7 +87,7 @@
 }
 
 .config-header {
-    display:flex;
+    display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
