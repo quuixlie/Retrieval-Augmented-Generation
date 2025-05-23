@@ -1,12 +1,24 @@
+import logging
+import dataclasses
+from typing import Literal
 import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
 import formatting as fmt
-from extensions import db
+from extensions import db, socketio
 from app_config import AppConfig
 from .models import ChatMessageModel, ConversationModel, DocumentModel, ConfigModel
 
 chat_bp = Blueprint("chat", __name__, static_folder="static", template_folder="templates")
+
+
+@dataclasses.dataclass
+class ChatResponse:
+    """
+    Template class representing structure of the response to the frontend
+    """
+    status: Literal["ok", "error"]
+    message: str
 
 
 @chat_bp.route('/<int:conversation_id>', methods=["GET"])
@@ -99,25 +111,21 @@ def delete(id: int):
     """
     Deletes the conversation with given id
     """
-
-    # TODO :: Return meaningful errors
-
     if not id:
-        print("No del_id provided")
-        return "", 400
+        logging.error("Couldn't delete conversation: No ID provided.")
+        return jsonify({"error": "No ID Provided"}), 400
 
     if not ConversationModel.exists(id):
-        print(f"Conversation {id} does not exist - cannot delete it")
-        return "", 400
+        logging.error(f"Conversation {id} does not exist - cannot delete it")
+        return jsonify({"error": "Conversation with given ID doesn't exist"}), 400
 
     url = f"{AppConfig.API_BASE_URL}/delete_collection/{id}"
     response = requests.delete(url)
 
     try:
         responseJSON = response.json()
-
         if responseJSON.get("error", None):
-            return "", 400
+            return jsonify({"error": responseJSON["error"]}), 400
 
         db.session.delete(ConversationModel.query.filter(ConversationModel.id == id).first())
         db.session.commit()
@@ -125,8 +133,8 @@ def delete(id: int):
         return "", 200
 
     except Exception as e:
-        print(e)
-        return "", 400
+        logging.error("Unknown error occurred when deleting conversation with ID:", str(id), str(e))
+        return jsonify({"error": "Unknown error occurred."}), 400
 
 
 @chat_bp.route('/send/<int:conversation_id>', methods=["POST"])
@@ -147,12 +155,12 @@ def send(conversation_id: int):
     conversation = ConversationModel.query.filter(ConversationModel.id == conversation_id).first()
 
     if not conversation:
-        return jsonify({"error": "Invalid conversation"}), 400
+        return jsonify(ChatResponse(status="error", message="Invalid conversation")), 400
 
     message = request.form.get("message", None)
 
     if not message:
-        return jsonify({"error": "Message not provided"}), 400
+        return jsonify(ChatResponse(status="error", message="Message not provided")), 400
 
     url = f"{AppConfig.API_BASE_URL}/query/{conversation_id}"
     config_dict = conversation.active_config.get_values_dict()
@@ -163,7 +171,7 @@ def send(conversation_id: int):
         responseJSON = response.json()
 
         if responseJSON.get("error", None):
-            return jsonify({"error": responseJSON.get("error")}), 400
+            return jsonify(ChatResponse(status="error", message=responseJSON.get("error"))), 400
 
         answer = responseJSON.get("answer", None)
         contexts = responseJSON.get("contexts", [])
@@ -175,8 +183,8 @@ def send(conversation_id: int):
         db.session.add(new_message)
         db.session.commit()
 
-        return jsonify({"rag_response": formatted_response})
+        return jsonify(ChatResponse(status="ok", message=formatted_response))
 
     except Exception as e:
-        print(e)
-        return jsonify({"error": "Unknown error occurred"}), 500
+        logging.error(e)
+        return jsonify(ChatResponse(status="error", message="Unknown error occurred.")), 500

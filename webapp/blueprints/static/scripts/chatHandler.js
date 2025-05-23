@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const documentInput = document.getElementById("documentInput")
     const messageInput = chatForm.getElementsByTagName("textarea")[0];
 
+
     // Creating the spinner
     const loader = document.createElement('div');
     const spinner = document.createElement('div');
@@ -54,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < elements.length; ++i) {
             elements[i].readOnly = false;
         }
-
     }
 
     function createMessage(message, isResponse) {
@@ -101,13 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function refreshFileList(newHTML) {
         const fileList = document.getElementById("documentList")
         fileList.innerHTML = newHTML.trim()
-
     }
 
     chatForm.addEventListener('submit', (event) => {
-        console.log("nigga")
         event.preventDefault();
-
         let input = messageInput.value;
 
         messageInput.value = '';
@@ -125,23 +122,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append("message", input);
 
+
         const chatUrl = chatForm.getAttribute('action');
         fetch(chatUrl, {
             method: "POST",
             body: formData
-        }).then(async (response) => {
+        }).then((response) => {
             return response.json()
         }).then((data) => {
-            if (data["rag_response"]) {
+            if (data["message"]) {
                 // Creating the response
-                const ragMessage = createMessage(data["rag_response"], true);
+                const ragMessage = createMessage(data["message"], true);
                 addMessageToChat(ragMessage);
             } else if (data["error"]) {
                 chatError(data["error"])
             }
-
-
         }).catch((error) => {
+            chatError("Unknown error occurred. Couldn't send message.")
+            console.error("Error when sending message: ", error)
             userMessage.remove()
         }).finally(() => {
             // Removing the loading spinner

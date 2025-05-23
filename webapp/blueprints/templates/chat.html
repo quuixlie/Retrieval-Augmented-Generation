@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Chat{% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ url_for('chat.static',filename='styles/chat.css') }}"/> {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('chat.static',filename='styles/chat.css') }}"/>
+{% endblock %}
 {% block content %}
 
     <div class="chat-config-button dropdown">
@@ -42,7 +43,8 @@
         <form class="chat-input-container" id="chatForm"
               action="{{ url_for("chat.send",conversation_id=conversation_id) }}" method="post">
             <label class="btn primary dropdown">
-                <img class="icon extra-large dropdown-button" src="{{ url_for('static',filename='icons/add_file.svg') }}" alt="File">
+                <img class="icon extra-large dropdown-button"
+                     src="{{ url_for('static',filename='icons/add_file.svg') }}" alt="File">
                 <div class="dropdown-menu up" id="documentList">
                     {% include "chat_file_list.html" %}
                 </div>

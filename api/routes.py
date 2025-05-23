@@ -60,7 +60,11 @@ async def index(conversation_id: int, parameters: QueryModel):
     # if not classic_rag.can_process_query(conversation_id):
     #    raise HTTPException(status_code=400, detail={"error": "No documents uploaded"})
 
-    response = classic_rag.process_query(conversation_id, query)
+    try:
+        response = classic_rag.process_query(conversation_id, query)
+    except Exception as e:
+        logging.error(f"Error processing query: {e}")
+        raise HTTPException(status_code=500, detail={"error": "Internal error when processing query"})
 
     answer = response['answer']
     contexts = response['contexts']
@@ -70,7 +74,7 @@ async def index(conversation_id: int, parameters: QueryModel):
 
 #
 @api_router.post('/upload/{conversation_id}')
-async def upload_documents(conversation_id: int, files: Annotated[list[UploadFile],[]],
+async def upload_documents(conversation_id: int, files: Annotated[list[UploadFile], []],
                            config: Annotated[UploadFile, File()]):
     """
     Uploads files to RAG
@@ -80,24 +84,16 @@ async def upload_documents(conversation_id: int, files: Annotated[list[UploadFil
     :return: JSON with error at key "error" or success message at key "message"
     """
 
-    if config:
-        content = config.file.read()
-        config = json.loads(content)
-
-    print("Upload files: ", files)
-    print("Upload files config: ", config)
-
     if not files:
         raise HTTPException(status_code=400, detail={"error": "No files provided"})
 
     for file in files:
         if file.content_type != "application/json":
             logging.warn(f"File: {file.filename} doesn't have mime type set to 'application/json', skipping.")
+            continue
 
         file_bytes = await file.read()
-
         doc = Document(stream=file_bytes, filetype="pdf")
-
         classic_rag.process_document(conversation_id, doc)
 
     return {"message": "Files uploaded"}
