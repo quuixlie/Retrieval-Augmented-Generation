@@ -94,9 +94,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     scrollToBottom()
-    chatForm.addEventListener('submit', (event) => {
 
+
+// Uploading files
+
+    function refreshFileList(newHTML) {
+        const fileList = document.getElementById("documentList")
+        fileList.innerHTML = newHTML.trim()
+
+    }
+
+    chatForm.addEventListener('submit', (event) => {
+        console.log("nigga")
         event.preventDefault();
+
         let input = messageInput.value;
 
         messageInput.value = '';
@@ -139,14 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     })
 
-
-// Uploading files
-
-    function refreshFileList(newHTML) {
-        const fileList = document.getElementById("documentList")
-        fileList.innerHTML = newHTML.trim()
-
-    }
+    messageInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            chatForm.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))
+        }
+    });
 
     documentInput.addEventListener("change", () => {
         const files = documentInput.files

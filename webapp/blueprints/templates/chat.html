@@ -40,7 +40,7 @@
         </div>
 
         <form class="chat-input-container" id="chatForm"
-              action="{{ url_for("chat.send",conversation_id=conversation_id) }}">
+              action="{{ url_for("chat.send",conversation_id=conversation_id) }}" method="post">
             <label class="btn primary dropdown">
                 <img class="icon extra-large dropdown-button" src="{{ url_for('static',filename='icons/add_file.svg') }}" alt="File">
                 <div class="dropdown-menu up" id="documentList">
