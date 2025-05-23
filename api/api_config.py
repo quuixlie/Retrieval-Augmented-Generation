@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 
@@ -6,7 +7,7 @@ import requests
 
 class ApiConfig:
     DB_URL: str | None = None
-    OPENROUTER_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
     AVAILABLE_MODELS = []
 
     @staticmethod
@@ -14,12 +15,12 @@ class ApiConfig:
         """
         Initializes the configuration
         """
-        print("Initializing ApiConfig")
+        logging.info("Initializing ApiConfig")
 
         ApiConfig.__load_env()
-        ApiConfig.__set_available_models()
+        ApiConfig.refresh_models()
 
-        print("Initialized ApiConfig")
+        logging.info("Initialized ApiConfig")
 
     @staticmethod
     def __load_env():
@@ -27,19 +28,20 @@ class ApiConfig:
         Loads envvars
         """
 
-        ApiConfig.OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+        ApiConfig.OPENAI_API_KEY = os.getenv("OPENROUTER_API_KEY")
         ApiConfig.DB_URL = os.getenv("DB_URL")
 
         if not ApiConfig.DB_URL:
-            print("MILVUS_URL Environment variable not set - terminal error exiting")
+            logging.critical("DB_URL Environment variable not set - terminal error exiting")
             exit(-1)
 
-        if not ApiConfig.OPENROUTER_API_KEY:
-            print("OPENROUTER_API_KEY Environment variable not set - terminal error exiting")
+        if not ApiConfig.OPENAI_API_KEY:
+            logging.critical("OPENAI_API_KEY Environment variable not set - terminal error exiting")
             exit(-1)
+
 
     @staticmethod
-    def __set_available_models():
+    def refresh_models():
         """
         Sets the available models
         """
@@ -48,7 +50,7 @@ class ApiConfig:
         response = requests.get("https://openrouter.ai/api/v1/models")
 
         if not response.ok:
-            print("Couldn't fetch available models from openrouter")
+            logging.error("Couldn't fetch available models from openrouter")
             return
         try:
             models = response.json()["data"]
@@ -62,5 +64,5 @@ class ApiConfig:
 
             ApiConfig.AVAILABLE_MODELS = models
         except Exception as e:
-            print(f"Error occurred while fetching models: {e}")
+            logging.error(f"Error occurred while fetching models: {e}")
             return

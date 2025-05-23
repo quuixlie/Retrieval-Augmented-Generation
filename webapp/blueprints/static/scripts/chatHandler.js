@@ -93,27 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-
     scrollToBottom()
-
-    messageInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            if (event.shiftKey) {
-                // Allow new line
-                event.preventDefault();
-                let cursorPos = messageInput.selectionStart;
-                let text = messageInput.value;
-                messageInput.value = text.substring(0, cursorPos) + "\n" + text.substring(cursorPos);
-                messageInput.selectionStart = messageInput.selectionEnd = cursorPos + 1;
-            } else {
-                // Submit the form
-                event.preventDefault();
-                messageInput.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}));
-            }
-        }
-    });
-
     chatForm.addEventListener('submit', (event) => {
+
         event.preventDefault();
         let input = messageInput.value;
 

@@ -1,5 +1,8 @@
 ## Running the app
 
+>![important]
+> Make sure to clone the repository with ```--recursive``` flag or manually initialize the submodules.
+
 ### Running with docker compose (Preferred)
 
 1. Make sure you have ```docker-compose``` installed.
@@ -38,7 +41,7 @@
     # Postgres is the preferred database
     DB_CONNECTION_STRING=postgresql://<YOUR_USERNAME>:<YOUR_USER_PASSWORD>@localhost:5432/<YOUR_DB_NAME>
     
-    OPENROUTER_API_KEY=<YOUR_KEY>
+    OPENAI_API_KEY=<YOUR_KEY>
     ```
 5. Run the app using:
     ```

@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 
-db = None
-
 
 def create_api():
     api = FastAPI()
@@ -9,20 +7,13 @@ def create_api():
     from api_config import ApiConfig
     ApiConfig.initialize()
 
-    from rag.vector_db import VectorDB
-
-    global db
-    db = VectorDB()
-
     import routes
     api.include_router(routes.api_router)
-
-
 
     return api
 
 
+if __name__ == "__main__":
+    import uvicorn
 
-
-
-
+    uvicorn.run(create_api, host="0.0.0.0", port=8081, factory=True)

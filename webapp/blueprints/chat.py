@@ -1,6 +1,7 @@
 import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
+import formatting as fmt
 from extensions import db
 from app_config import AppConfig
 from .models import ChatMessageModel, ConversationModel, DocumentModel, ConfigModel
@@ -164,14 +165,17 @@ def send(conversation_id: int):
         if responseJSON.get("error", None):
             return jsonify({"error": responseJSON.get("error")}), 400
 
-        response_message = responseJSON.get("message", None)
+        answer = responseJSON.get("answer", None)
+        contexts = responseJSON.get("contexts", [])
+        formatted_response = fmt.format_response(answer, contexts)
 
         # Saving to the db
-        new_message = ChatMessageModel(conversation_id=conversation_id, message=message, response=response_message)
+        new_message = ChatMessageModel(conversation_id=conversation_id, message=message,
+                                       response=formatted_response)
         db.session.add(new_message)
         db.session.commit()
 
-        return jsonify({"rag_response": response_message})
+        return jsonify({"rag_response": formatted_response})
 
     except Exception as e:
         print(e)
