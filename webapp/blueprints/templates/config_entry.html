@@ -1,0 +1,27 @@
+{% macro config_entry(field_data) %}
+    {% if field_data is string %}
+        {# If it is a string it is treated like a section header #}
+        <h2>{{ field_data }}</h2>
+    {% elif field_data['value'] is string %}
+        <label class="text-input-container">
+            {{ field_data['name'] }}
+            <input type="text" class="text-input" name="{{ field_data['name'] }}"/>
+        </label>
+    {% elif field_data['value'] is number %}
+        <label class="text-input-container">
+            {{ field_data['name'] }}
+            <input type="text" class="text-input" name="{{ field_data['name'] }}"/>
+        </label>
+    {% elif field_data['value'] is iterable and field_data is not string %}
+        <label class="text-input-container">
+            {{ field_data['name'] }}
+            <select class="combo-box" name="{{ field_data['name'] }}">
+                {% for item in field_data['value'] %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    {% else %}
+        Variable is of unknown type.
+    {% endif %}
+{% endmacro %}

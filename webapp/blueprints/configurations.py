@@ -49,7 +49,7 @@ def create():
 
     """
     if request.method == "GET":
-        return render_template("config_create.html", available_models=AppConfig.AVAILABLE_MODELS)
+        return render_template("config_create.html", available_models=AppConfig.AVAILABLE_MODELS,available_config_fields=AppConfig.AVAILABLE_CONFIG_FIELDS)
 
     config_name = request.form.get("name", None)
     model_id: str = request.form.get("model_id", None)

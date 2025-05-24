@@ -24,6 +24,10 @@
                 Chunk size
                 <input class="text-input" type="number" name="chunkSize" placeholder="Type Chunk size here" required>
             </label>
+        {% import "config_entry.html" as config %}
+        {% for config_field in available_config_fields %}
+            {{ config.config_entry(config_field) }}
+        {% endfor %}
         {# ??
             <label class="text-input-container size-min-content">
                 Document count

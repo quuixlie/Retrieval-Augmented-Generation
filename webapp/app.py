@@ -1,8 +1,7 @@
 from flask import Flask, redirect, url_for
 from flask_migrate import Migrate
 
-from extensions import db,socketio
-
+from extensions import db
 
 def register_cli_arguments(app: Flask) -> None:
     """
@@ -41,8 +40,6 @@ def create_app() -> Flask:
     print("Initializing database connection")
     _ = Migrate(app, db)
 
-    socketio.init_app(app)
-
     # Registering blueprints and routes
     from blueprints.chat import chat_bp
     from blueprints.configurations import cfg_bp
@@ -76,4 +73,4 @@ def create_app() -> Flask:
 
 
 if __name__ == '__main__':
-    create_app().run("127.0.0.1", port=6942, debug=True)
+    create_app().run("127.0.0.1", port=8080, debug=True)

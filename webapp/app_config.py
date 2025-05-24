@@ -24,6 +24,7 @@ class AppConfig:
     List of available models
     """
     AVAILABLE_MODELS = []
+    AVAILABLE_CONFIG_FIELDS = []
 
     @staticmethod
     def initialize() -> None:
@@ -90,6 +91,9 @@ class AppConfig:
             if response.status_code == 200:
                 AppConfig.AVAILABLE_MODELS = response.json()["models"]
                 logging.info("Available models loaded")
+                AppConfig.AVAILABLE_CONFIG_FIELDS = response.json()["config_generic_fields"]
+                logging.info("Available models loaded")
+
             else:
                 logging.critical("Error loading available models - terminal error exiting")
                 exit(-1)

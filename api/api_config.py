@@ -28,7 +28,7 @@ class ApiConfig:
         Loads envvars
         """
 
-        ApiConfig.OPENAI_API_KEY = os.getenv("OPENROUTER_API_KEY")
+        ApiConfig.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
         ApiConfig.DB_URL = os.getenv("DB_URL")
 
         if not ApiConfig.DB_URL:

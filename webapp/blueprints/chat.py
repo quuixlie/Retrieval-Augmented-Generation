@@ -5,7 +5,7 @@ import requests
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
 import formatting as fmt
-from extensions import db, socketio
+from extensions import db
 from app_config import AppConfig
 from .models import ChatMessageModel, ConversationModel, DocumentModel, ConfigModel
 

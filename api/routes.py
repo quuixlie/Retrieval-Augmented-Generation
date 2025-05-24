@@ -9,10 +9,15 @@ import json
 import RAG.rag_architectures.rag_architecture_factory as rag_factory
 import RAG.config as rag_config
 from api_config import ApiConfig
+from rag_config_parser import map_members
 
 api_router = APIRouter()
+classic_rag = rag_factory.RAGArchitectureFactory("classic-rag", config=rag_config.config)
 
-classic_rag = rag_factory.RAGArchitectureFactory("classic-rag", config=rag_config.Config())
+config_fields = []
+
+for m in map_members(type(rag_config.config)):
+    config_fields.append(m)
 
 
 @api_router.get("/health")
@@ -29,9 +34,9 @@ async def available_models():
     ApiConfig.refresh_models()
     return {
         "models": ApiConfig.AVAILABLE_MODELS,
+        "config_generic_fields":config_fields,
         # TODO :: Add support for architecture and configs
     }
-
 
 class QueryModel(BaseModel):
     query: str | None = None
